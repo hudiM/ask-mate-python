@@ -15,7 +15,9 @@ def route_index():
 
 @app.route('/question/<question_id>')
 def route_new_question(question_id):
-    return render_template('question.html')
+    question = connection.readQuestion(data_manager.questions_file_name, question_id)
+    print(question)
+    return render_template('question.html', question=question)
 
 
 if __name__ == '__main__':

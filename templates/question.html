@@ -6,5 +6,25 @@
 </head>
 <body>
 
+    <h1>{{ question["title"] }}</h1>
+    {{ question["message"] }}<br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Submisson</th>
+                <th>View number</th>
+                <th>Sum of votes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ question["id"] }}</td>
+                <td>{{ question["submisson_time"] }}</td>
+                <td>{{ question["view_number"] }}</td>
+                <td>{{ question["vote_number"] }}</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

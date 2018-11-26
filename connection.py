@@ -28,7 +28,7 @@ def readAllQuestion(filename):
 def writeQuestion(filename, data):
     try:
         with open(filename, 'w') as file:
-            file.write('id,submisson_time,view_number,vote_number,title,title,message,image\n')
+            file.write('id,submisson_time,view_number,vote_number,title,message,image\n')
             writeFile = csv.DictWriter(file, ['id', 'submisson_time', 'view_number', 'vote_number', 'title', 'message',
                                               'image'] , lineterminator='\n')
             writeFile.writerow(data)
