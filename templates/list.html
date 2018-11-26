@@ -5,6 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-
+<a href="/addquestion"></a>
+<h3>Questions</h3>
+{% for question in questions %}
+    {{ question['title'] }}<br>
+{% endfor %}
+</table>
 </body>
 </html>
