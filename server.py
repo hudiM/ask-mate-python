@@ -13,6 +13,11 @@ def route_index():
     return render_template('list.html', questions = questions)
 
 
+@app.route('/question/<question_id>')
+def route_new_question(question_id):
+    return render_template('question.html')
+
+
 if __name__ == '__main__':
     app.run(
         debug=True, # Allow verbose error reports
