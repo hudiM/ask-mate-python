@@ -25,6 +25,15 @@ def readAllQuestion(filename):
     return data
 
 
+def createQuestionDatabase():
+    try:
+        with open('question.csv', 'w') as file:
+            file.write('id,submisson_time,view_number,vote_number,title,message,image\n')
+    except FileNotFoundError as err:
+        print('[Error]', err)
+    return
+
+
 def writeQuestion(filename, data):
     try:
         with open(filename, 'w') as file:

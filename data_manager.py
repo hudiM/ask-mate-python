@@ -20,7 +20,8 @@ import time
 questions_file_name = 'question.csv'
 answers_file_name = 'answers.csv'
 
-def test():
+def createDebugDatabase():
+    connection.writeQuestion(questions_file_name, {'id': 0, 'submisson_time': 10, 'view_number': 15, 'vote_number': 50, 'title': 'Da question', 'message': 'This is the question', 'image': 'https://cdn.frankerfacez.com/emoticon/139407/4' })
     return
 
 

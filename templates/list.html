@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Welcome</title>
 </head>
 <body>
-<a href="/question/1">test</a>
+<h3>Welcome</h3>
+<a href="/settings">Settings</a> <i>Debug</i><br>
+<a href="/add-question">Ask a question</a>
 <h3>Questions</h3>
 {% for question in questions %}
-    {{ question['title'] }}<br>
+    <a href="/question/{{ question['id'] }}">{{ question['title'] }}</a><br>
 {% endfor %}
 </table>
 </body>
