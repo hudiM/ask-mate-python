@@ -32,7 +32,9 @@ def route_add_question():
 @app.route('/question/<question_id>')
 def route_question(question_id):
     question = connection.readQuestion(data_manager.questions_file_name, question_id)
-    return render_template('question.html', question=question)
+    question = data_manager.countViews(question)
+    answers = connection.readAllAnswer(data_manager.answers_file_name)
+    return render_template('question.html', question=question, answers = answers)
 
 @app.route('/question/<question_id>/new-answer', methods=['GET','POST'])
 def route_new_answer(question_id):

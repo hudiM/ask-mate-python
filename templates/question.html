@@ -5,27 +5,45 @@
     <title>Title</title>
 </head>
 <body>
-
     <h1>{{ question["title"] }}</h1>
-    {{ question["message"] }}<br><br>
+    <p>{{ question["message"] }}</p>
+    <font size="2">
     <table>
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Submisson</th>
+                <th>Submission time</th>
                 <th>View number</th>
                 <th>Sum of votes</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{ question["id"] }}</td>
-                <td>{{ question["submisson_time"] }}</td>
-                <td>{{ question["view_number"] }}</td>
-                <td>{{ question["vote_number"] }}</td>
+                <td><center>{{ question["submission_time"] }}</center></td>
+                <td><center>{{ question["view_number"] }}</center></td>
+                <td><center>{{ question["vote_number"] }}</center></td>
             </tr>
         </tbody>
     </table>
-    <a href="/question/{{ question["id"] }}/new-answer">New answer</a>
+    </font>
+    <h3>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h3>
+    {% for answer in answers %}
+        <p><img src="{{ answer["image"] }}" height="24" width="24"> {{ answer["message"] }}</p>
+        <font size="2">
+        <table>
+            <thead>
+                <tr>
+                    <td>Votes</td>
+                    <td>Submission time</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><center>{{ answer["vote_number"] }}</center></td>
+                    <td><center>{{ answer["submission_time"] }}</center></td>
+                </tr>
+            </tbody>
+        </table>
+        </font>
+    {% endfor %}
 </body>
 </html>
