@@ -36,8 +36,17 @@ def addNewQuestion(form):
     connection.writeQuestion('question.csv', form)
     return
 
-def resolveAnswer(form):
+
+def resolveAnswerForm(form, qID):
+    form.setdefault('id', 1)
+    form.setdefault('question_id', qID)
+    form.setdefault('vote_number', 0)
+    form.setdefault('submission_time', time.asctime( time.localtime(time.time())))
     return form
 
-def addNewAnswer(form):
+
+def addNewAnswer(form, questionID):
+    form = resolveAnswerForm(form, questionID)
+    print(form)
+    # connection.addAnswer(form)
     return
