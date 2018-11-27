@@ -100,7 +100,7 @@ def writeAnswer(filename, data):
     try:
         with open(filename, 'w') as file:
             file.write('id,submission_time,vote_number,question_id,message,image\n')
-            writeFile = csv.DictWriter(file, ['id', 'submisson_time', 'vote_number', 'question_id', 'message',
+            writeFile = csv.DictWriter(file, ['id', 'submission_time', 'vote_number', 'question_id', 'message',
                                               'image'] , lineterminator='\n')
             writeFile.writerow(data)
     except FileNotFoundError as err:

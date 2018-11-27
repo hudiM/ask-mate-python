@@ -3,7 +3,7 @@ import time
 
 #       QUESTIONS
 # id: A unique identifier for the question
-# submisson_time: The UNIX timestamp when the question was posted
+# submission_time: The UNIX timestamp when the question was posted
 # view_number: How many times this question was displayed in the single question view
 # vote_number: The sum of votes this question has received
 # title: The title of the question
