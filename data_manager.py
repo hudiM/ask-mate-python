@@ -37,6 +37,11 @@ def addNewQuestion(form):
     return
 
 
+def appendNewQuestion(form):
+    form = resolveQuestionForm(form)
+    connection.addQuestion()
+    return form
+
 def resolveAnswerForm(form, qID):
     form.setdefault('id', 1)
     form.setdefault('question_id', qID)

@@ -20,6 +20,14 @@ def route_new_question():
         return redirect('/')
     return render_template('new_question.html')
 
+@app.route('/add-question', methods=['GET', 'POST'])
+def route_add_question():
+    if request.method == 'POST':
+        form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
+        data_manager.addNewQuestion(form)
+        return redirect('/')
+
+
 
 @app.route('/question/<question_id>')
 def route_question(question_id):
