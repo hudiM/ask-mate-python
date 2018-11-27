@@ -48,5 +48,5 @@ def resolveAnswerForm(form, qID):
 def addNewAnswer(form, questionID):
     form = resolveAnswerForm(form, questionID)
     print(form)
-    # connection.addAnswer(form)
+    connection.addAnswer(answers_file_name, form)
     return

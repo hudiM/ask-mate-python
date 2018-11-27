@@ -26,12 +26,13 @@ def route_question(question_id):
     question = connection.readQuestion(data_manager.questions_file_name, question_id)
     return render_template('question.html', question=question)
 
-@app.route('/question/<question_id>/new-answer')
+@app.route('/question/<question_id>/new-answer', methods=['GET','POST'])
 def route_new_answer(question_id):
     if request.method == 'POST':
-        data_manager.addNewAnswer(request.form, question_id)
+        form = {'message': request.form['message'], 'image': request.form['image']}
+        data_manager.addNewAnswer(form, question_id)
         return redirect('/question/'+str(question_id))
-    return render_template('new_answer.html')
+    return render_template('new_answer.html', question_id = question_id)
 
 @app.route('/settings')
 def route_settings():
