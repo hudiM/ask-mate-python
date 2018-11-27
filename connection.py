@@ -62,12 +62,12 @@ def addQuestion(filename, data):
 #                       ANSWER
 ###############################################################
 
-def readAnswer(filename, questionID):
+def readAnswer(filename, questionID, answerID):
     try:
         with open(filename, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                if row['id'] == questionID:
+                if row['question_id'] == questionID and row['id'] == answerID:
                     return row
     except FileNotFoundError as err:
         print('[Error]', err)

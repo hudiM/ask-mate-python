@@ -10,7 +10,7 @@
 <a href="/add-question">Ask a question</a>
 <h3>Questions</h3>
 {% for question in questions %}
-    <a href="/question/{{ question['id'] }}">{{ question['title'] }}</a><br>
+    <img src="{{ question["image"] }}" height="24" width="24"> <a href="/question/{{ question['id'] }}">{{ question['title'] }}</a><br>
 {% endfor %}
 </body>
 </html>
