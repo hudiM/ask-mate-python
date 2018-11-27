@@ -21,12 +21,13 @@ questions_file_name = 'question.csv'
 answers_file_name = 'answers.csv'
 
 def createDebugDatabase():
-    connection.writeQuestion(questions_file_name, {'id': 0, 'submisson_time': 10, 'view_number': 15, 'vote_number': 50, 'title': 'Da question', 'message': 'This is the question', 'image': 'https://cdn.frankerfacez.com/emoticon/139407/4' })
+    connection.writeQuestion(questions_file_name, {'id': 0, 'submission_time': 10, 'view_number': 15, 'vote_number': 50, 'title': 'Da question', 'message': 'This is the question', 'image': 'https://cdn.frankerfacez.com/emoticon/139407/4' })
+    connection.writeAnswer(answers_file_name, {'id': 0, 'submission_time': 10, 'vote_number': 15, 'question_id': 0, 'message': 'This is an answer', 'image': 'image.png'})
     return
 
 
 def resolveQuestionForm(form):
-    form.setdefault('submisson_time',time.time())
+    form.setdefault('submission_time',time.time())
     return form
 
 
