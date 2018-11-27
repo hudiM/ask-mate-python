@@ -71,3 +71,18 @@ def isUUIDExist(mode, uniqueID):
             if uniqueID != elem['id']:
                 return 1
     return 0
+
+def countViews(question):
+    question['view_number'] = int(question['view_number'])+1
+    updateQuestion(question)
+    return question
+
+def updateQuestion(question):
+    data = connection.readAllQuestion(questions_file_name)
+    for elem in data:
+        if elem['id'] == question['id']:
+            data[data.index(elem)] = question
+            break
+    print(data)
+    connection.updateQuestion(questions_file_name, data)
+    return

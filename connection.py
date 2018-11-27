@@ -58,6 +58,13 @@ def addQuestion(filename, data):
         print('[Error]', err)
     return
 
+# data = list of dictionaries [{}, {}]
+def updateQuestion(filename, data):
+    createQuestionDatabase()
+    for elem in data:
+        addQuestion(filename, elem)
+    return
+
 ###############################################################
 #                       ANSWER
 ###############################################################
