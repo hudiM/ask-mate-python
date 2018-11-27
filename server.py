@@ -26,6 +26,8 @@ def route_question(question_id):
     question = connection.readQuestion(data_manager.questions_file_name, question_id)
     return render_template('question.html', question=question)
 
+@app.route('/question')
+
 
 @app.route('/settings')
 def route_settings():
