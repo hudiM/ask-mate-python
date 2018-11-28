@@ -96,7 +96,7 @@ def readAllAnswer(filename):
 
 def createAnswerDatabase():
     try:
-        with open('question.csv', 'w') as file:
+        with open('answer.csv', 'w') as file:
             file.write('id,submission_time,vote_number,question_id,message,image\n')
     except FileNotFoundError as err:
         print('[Error]', err)
