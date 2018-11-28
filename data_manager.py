@@ -69,7 +69,9 @@ def resolveAnswerForm(form, qID):
 
 
 def addNewAnswer(form, questionID):
+    print('answer')
     form = resolveAnswerForm(form, questionID)
+    print('form done')
     connection.addAnswer(answers_file_name, form)
     return
 
@@ -85,11 +87,15 @@ def newUUID(mode):
 def isUUIDExist(mode, uniqueID):
     if mode == 'answer':
         data = connection.readAllAnswer(answers_file_name)
+        if data == []:
+            return 1
         for elem in data:
             if uniqueID != elem['id']:
                 return 1
     if mode == 'question':
         data = connection.readAllQuestion(questions_file_name)
+        if data == []:
+            return 1
         for elem in data:
             if uniqueID != elem['id']:
                 return 1
@@ -102,6 +108,11 @@ def countViews(question):
     updateQuestion(question)
     return question
 
+def voteCountViewsFix(question):
+    question['view_number'] = int(question['view_number'])-1
+    updateQuestion(question)
+    return question
+
 
 # switches 1 line in question database with the new given question
 def updateQuestion(question):
@@ -111,4 +122,63 @@ def updateQuestion(question):
             data[data.index(elem)] = question
             break
     connection.updateQuestion(questions_file_name, data)
+    return
+
+
+def deleteQuestion(qID):
+    question = connection.readQuestion(questions_file_name, qID)
+    questions = connection.readAllQuestion(questions_file_name)
+    questions.remove(question)
+    connection.updateQuestion(questions_file_name, questions)
+    deleteAnswersByQuestion(qID)
+    return
+
+def deleteAnswersByQuestion(qID):
+    answers = connection.readAllAnswer(answers_file_name)
+    answers = [answer for answer in answers if answer['question_id'] != qID]
+    connection.updateAnswer(answers_file_name, answers)
+    return
+
+
+def deleteAnswer(aID):
+    answer = connection.readAnswer(answers_file_name, aID)
+    answers = connection.readAllAnswer(answers_file_name)
+    answers.remove(answer)
+    connection.updateAnswer(answers_file_name, answers)
+    return answer['question_id']
+
+
+# vote up
+def voteSend(answer):
+    data = connection.readAllAnswer(answers_file_name)
+    for elem in data:
+        if elem['id'] == answer['id']:
+            data[data.index(elem)] = answer
+    connection.updateAnswer(answers_file_name, data)
+    return
+
+def voteUp(aID):
+    answer = connection.readAnswer(answers_file_name, aID)
+    answer['vote_number'] = int(answer['vote_number'])+1
+    voteSend(answer)
+    voteCountViewsFix(connection.readQuestion(questions_file_name, answer['question_id']))
+    return answer['question_id']
+
+def voteDown(aID):
+    answer = connection.readAnswer(answers_file_name, aID)
+    answer['vote_number'] = int(answer['vote_number'])-1
+    voteSend(answer)
+    voteCountViewsFix(connection.readQuestion(questions_file_name, answer['question_id']))
+    return answer['question_id']
+
+
+def editQuestion(form, question_id):
+    question = connection.readQuestion(questions_file_name, question_id)
+    questions = connection.readAllAnswer(questions_file_name)
+    number = questions.index(question)
+    question['title'] = form['title']
+    question['message'] = form['message']
+    question['image'] = form['image']
+    questions[number] = question
+    connection.updateQuestion(questions_file_name, questions)
     return

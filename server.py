@@ -5,6 +5,10 @@ import connection
 app = Flask(__name__)
 
 
+# ------------------------
+#           main
+# ------------------------
+
 @app.route('/')
 @app.route('/list')
 def route_index():
@@ -19,7 +23,7 @@ def route_add_question():
         form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
         uid = data_manager.addNewQuestion(form)
         return redirect('/question/' + str(uid))
-    return render_template('new_question.html')
+    return render_template('new_question.html', question = None)
 
 
 @app.route('/question/<question_id>')
@@ -30,6 +34,29 @@ def route_question(question_id):
     answers = data_manager.getAnswersForQuestion(data_manager.answers_file_name, question_id)
     return render_template('question.html', question=question, answers = answers)
 
+
+@app.route('/question/<question_id>/delete')
+def route_question_delete(question_id):
+    data_manager.deleteQuestion(question_id)
+    return redirect('/')
+
+
+@app.route('/answer/<answer_id>/delete')
+def route_answer_delete(answer_id):
+    qID = data_manager.deleteAnswer(answer_id)
+    return redirect('/question/'+qID)
+
+
+@app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
+def route_question_edit(question_id):
+    if request.method == 'POST':
+        form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
+        data_manager.editQuestion(form, question_id)
+        return redirect('/question/'+question_id)
+    question = connection.readQuestion(data_manager.questions_file_name, question_id)
+    return render_template('new_question.html', question = question)
+
+
 @app.route('/question/<question_id>/new-answer', methods=['GET','POST'])
 def route_new_answer(question_id):
     if request.method == 'POST':
@@ -37,6 +64,20 @@ def route_new_answer(question_id):
         data_manager.addNewAnswer(form, question_id)
         return redirect('/question/'+str(question_id))
     return render_template('new_answer.html', question_id = question_id)
+
+
+@app.route('/answer/<answer_id>/vote-up')
+def route_vote_up(answer_id):
+    qID = data_manager.voteUp(answer_id)
+    return redirect('/question/'+qID)
+
+@app.route('/answer/<answer_id>/vote-down')
+def route_vote_down(answer_id):
+    qID = data_manager.voteDown(answer_id)
+    return redirect('/question/'+qID)
+# ------------------------
+#           debug
+# ------------------------
 
 @app.route('/settings')
 def route_settings():
@@ -52,6 +93,9 @@ def debugDatabase():
     data_manager.createDebugDatabase()
     return redirect('/settings')
 
+# ------------------------
+#           server
+# ------------------------
 
 if __name__ == '__main__':
     app.run(

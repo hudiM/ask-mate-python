@@ -69,12 +69,12 @@ def updateQuestion(filename, data):
 #                       ANSWER
 ###############################################################
 
-def readAnswer(filename, questionID, answerID):
+def readAnswer(filename, answerID):
     try:
         with open(filename, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                if row['question_id'] == questionID and row['id'] == answerID:
+                if row['id'] == answerID:
                     return row
     except FileNotFoundError as err:
         print('[Error]', err)
@@ -115,7 +115,6 @@ def writeAnswer(filename, data):
     return
 
 
-
 def addAnswer(filename, data):
     try:
         with open(filename, 'a') as file:
@@ -124,4 +123,11 @@ def addAnswer(filename, data):
             writeFile.writerow(data)
     except FileNotFoundError as err:
         print('[Error]', err)
+    return
+
+
+def updateAnswer(filename, data):
+    createAnswerDatabase()
+    for elem in data:
+        addAnswer(filename, elem)
     return

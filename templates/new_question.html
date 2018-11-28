@@ -5,6 +5,7 @@
     <title>New entry</title>
 </head>
 <body>
+    {% if question == None %}
     <form method="post">
         <label id="title">Title</label><br>
         <input name="title" id="title" type="text"><br>
@@ -14,5 +15,16 @@
         <input name="image" id="image" type="text"><br>
         <input type="submit">
     </form>
+    {% else %}
+    <form method="post">
+        <label id="title">Title</label><br>
+        <input name="title" id="title" type="text" value="{{ question['title'] }}"><br>
+        <label id="message">Message</label><br>
+        <textarea name="message" id="message">{{ question['message'] }}</textarea><br>
+        <label id="image">Image address</label>
+        <input name="image" id="image" type="text" value="{{ question['image'] }}"><br>
+        <input type="submit">
+    </form>
+    {% endif %}
 </body>
 </html>

@@ -9,20 +9,20 @@
     <p>{{ question["message"] }}</p>
     <font size="2">
     <table>
-        <thead>
-            <tr>
-                <th>Submission time</th>
-                <th>View number</th>
-                <th>Sum of votes</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><center>{{ question["submission_time"] }}</center></td>
-                <td><center>{{ question["view_number"] }}</center></td>
-                <td><center>{{ question["vote_number"] }}</center></td>
-            </tr>
-        </tbody>
+        <tr>
+            <th>Edit</th>
+            <th>Delete</th>
+            <th>Submission time</th>
+            <th>View number</th>
+            <th>Sum of votes</th>
+        </tr>
+        <tr>
+            <td><a href="/question/{{ question['id'] }}/edit"><img src="http://files.softicons.com/download/toolbar-icons/funktional-icons-by-creative-freedom/png/16x16/Edit.png"></a></td>
+            <td><a href="/question/{{ question['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="16" width="16"></a></td>
+            <td><center>{{ question["submission_time"] }}</center></td>
+            <td><center>{{ question["view_number"] }}</center></td>
+            <td><center>{{ question["vote_number"] }}</center></td>
+        </tr>
     </table>
     </font>
     <h3>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h3>
@@ -30,18 +30,18 @@
         <p><img src="{{ answer["image"] }}" height="24" width="24"> {{ answer["message"] }}</p>
         <font size="2">
         <table>
-            <thead>
-                <tr>
-                    <td>Votes</td>
-                    <td>Submission time</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><center>{{ answer["vote_number"] }}</center></td>
-                    <td><center>{{ answer["submission_time"] }}</center></td>
-                </tr>
-            </tbody>
+            <tr>
+                <td>Delete</td>
+                <td>Votes</td>
+                <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Up.png"></a></td>
+                <td>Submission time</td>
+            </tr>
+            <tr>
+                <td><center><a href="/answer/{{ answer['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="12" width="12"></a></center></td>
+                <td><center>{{ answer["vote_number"] }}</center></td>
+                <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Down.png"></a></td>
+                <td><center>{{ answer["submission_time"] }}</center></td>
+            </tr>
         </table>
         </font>
     {% endfor %}
