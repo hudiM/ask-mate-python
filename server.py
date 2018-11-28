@@ -9,9 +9,7 @@ app = Flask(__name__)
 @app.route('/list')
 def route_index():
     questions = connection.readAllQuestion(data_manager.questions_file_name)
-    print(questions)
-    questions.sort(int(questions['submission_time']))
-    print(questions)
+    questions = sorted(questions,key=lambda k: k['submission_time'], reverse=True)
     return render_template('list.html', questions = questions)
 
 

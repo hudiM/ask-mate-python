@@ -115,6 +115,7 @@ def writeAnswer(filename, data):
     return
 
 
+
 def addAnswer(filename, data):
     try:
         with open(filename, 'a') as file:
