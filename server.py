@@ -10,6 +10,8 @@ app = Flask(__name__)
 def route_index():
     questions = connection.readAllQuestion(data_manager.questions_file_name)
     print(questions)
+    questions.sort(int(questions['submission_time']))
+    print(questions)
     return render_template('list.html', questions = questions)
 
 
@@ -27,7 +29,8 @@ def route_add_question():
 def route_question(question_id):
     question = connection.readQuestion(data_manager.questions_file_name, question_id)
     question = data_manager.countViews(question)
-    answers = connection.readAllAnswer(data_manager.answers_file_name)
+    question = data_manager.convertTime(question)
+    answers = data_manager.getAnswersForQuestion(data_manager.answers_file_name, question_id)
     return render_template('question.html', question=question, answers = answers)
 
 @app.route('/question/<question_id>/new-answer', methods=['GET','POST'])
