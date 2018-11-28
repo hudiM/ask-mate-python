@@ -34,14 +34,18 @@ def createDebugDatabase():
 
 
 def resolveQuestionForm(form):
-    form.setdefault('submission_time',time.time())
-    return form
+    uid = newUUID('question')
+    form.setdefault('id', uid)
+    form.setdefault('submission_time', time.time())
+    form.setdefault('view_number', 0)
+    form.setdefault('vote_number', 0)
+    return form, uid
 
 
 def addNewQuestion(form):
-    form = resolveQuestionForm(form)
-    connection.writeQuestion('question.csv', form)
-    return
+    form, uid = resolveQuestionForm(form)
+    connection.addQuestion('question.csv', form)
+    return uid
 
 
 def convertTime(data):

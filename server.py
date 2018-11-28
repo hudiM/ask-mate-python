@@ -13,11 +13,12 @@ def route_index():
     return render_template('list.html', questions = questions)
 
 
-@app.route('/add-question', methods=['GET','POST'])
-def route_new_question():
+@app.route('/add-question', methods=['GET', 'POST'])
+def route_add_question():
     if request.method == 'POST':
-        data_manager.resolveQuestionForm(request.form)
-        return redirect('/')
+        form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
+        uid = data_manager.addNewQuestion(form)
+        return redirect('/question/' + str(uid))
     return render_template('new_question.html')
 
 
