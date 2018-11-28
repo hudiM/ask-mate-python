@@ -9,9 +9,6 @@ app = Flask(__name__)
 @app.route('/list')
 def route_index():
     questions = connection.readAllQuestion(data_manager.questions_file_name)
-    print(questions)
-    questions.sort(int(questions['submission_time']))
-    print(questions)
     return render_template('list.html', questions = questions)
 
 
@@ -19,8 +16,8 @@ def route_index():
 def route_add_question():
     if request.method == 'POST':
         form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
-        data_manager.addNewQuestion(form)
-        return redirect('/')
+        uid = data_manager.addNewQuestion(form)
+        return redirect('/question/' + str(uid))
     return render_template('new_question.html')
 
 
@@ -40,6 +37,9 @@ def route_new_answer(question_id):
         data_manager.addNewAnswer(form, question_id)
         return redirect('/question/'+str(question_id))
     return render_template('new_answer.html', question_id = question_id)
+
+
+
 
 @app.route('/settings')
 def route_settings():
