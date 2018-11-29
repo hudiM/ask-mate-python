@@ -21,8 +21,8 @@ def route_index():
 def route_add_question():
     if request.method == 'POST':
         form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
-        uid = data_manager.addNewQuestion(form)
-        return redirect('/question/' + str(uid))
+        unique_id = data_manager.addNewQuestion(form)
+        return redirect('/question/' + str(unique_id))
     return render_template('new_question.html', question = None)
 
 
@@ -43,8 +43,8 @@ def route_question_delete(question_id):
 
 @app.route('/answer/<answer_id>/delete')
 def route_answer_delete(answer_id):
-    qID = data_manager.deleteAnswer(answer_id)
-    return redirect('/question/'+qID)
+    question_id = data_manager.deleteAnswer(answer_id)
+    return redirect('/question/'+question_id)
 
 
 @app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
@@ -68,13 +68,13 @@ def route_new_answer(question_id):
 
 @app.route('/answer/<answer_id>/vote-up')
 def route_vote_up(answer_id):
-    qID = data_manager.voteUp(answer_id)
-    return redirect('/question/'+qID)
+    question_id = data_manager.voteAnswerUp(answer_id)
+    return redirect('/question/'+question_id)
 
 @app.route('/answer/<answer_id>/vote-down')
 def route_vote_down(answer_id):
-    qID = data_manager.voteDown(answer_id)
-    return redirect('/question/'+qID)
+    question_id = data_manager.voteAnswerDown(answer_id)
+    return redirect('/question/'+question_id)
 # ------------------------
 #           debug
 # ------------------------

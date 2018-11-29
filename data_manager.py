@@ -34,43 +34,43 @@ def createDebugDatabase():
 
 
 def resolveQuestionForm(form):
-    uid = newUUID('question')
-    form.setdefault('id', uid)
+    question_id = newUUID('question')
+    form.setdefault('id', question_id)
     form.setdefault('submission_time', time.time())
     form.setdefault('view_number', 0)
     form.setdefault('vote_number', 0)
-    return form, uid
+    return form, question_id
 
 
 def addNewQuestion(form):
-    form, uid = resolveQuestionForm(form)
+    form, question_id = resolveQuestionForm(form)
     connection.addQuestion('question.csv', form)
-    return uid
+    return question_id
 
 
-def convertTime(data):
-    data['submission_time'] = time.asctime(time.localtime(float(data['submission_time'])))
-    return data
+def convertTime(form):
+    form['submission_time'] = time.asctime(time.localtime(float(form['submission_time'])))
+    return form
 
 
 # returns answers for given question
-def getAnswersForQuestion(filename ,questionID):
+def getAnswersForQuestion(filename, question_id):
     answers = connection.readAllAnswer(filename)
-    answers = [convertTime(answer) for answer in answers if answer['question_id'] == questionID]
+    answers = [convertTime(answer) for answer in answers if answer['question_id'] == question_id]
     return answers
 
 
-def resolveAnswerForm(form, qID):
+def resolveAnswerForm(form, question_id):
     form.setdefault('id', newUUID('answer'))
-    form.setdefault('question_id', qID)
+    form.setdefault('question_id', question_id)
     form.setdefault('vote_number', 0)
     form.setdefault('submission_time', time.time())
     return form
 
 
-def addNewAnswer(form, questionID):
+def addNewAnswer(form, question_id):
     print('answer')
-    form = resolveAnswerForm(form, questionID)
+    form = resolveAnswerForm(form, question_id)
     print('form done')
     connection.addAnswer(answers_file_name, form)
     return
@@ -79,25 +79,25 @@ def addNewAnswer(form, questionID):
 # generates a new ID to be inserted in database, mode checks if it exist in given database
 # mode = question/answer
 def newUUID(mode):
-    uniqueID = uuid.uuid1()
-    while(not isUUIDExist(mode, uniqueID)):
-        uniqueID = uuid.uuid1()
-    return uniqueID
+    unique_id = uuid.uuid1()
+    while(not isUUIDExist(mode, unique_id)):
+        unique_id = uuid.uuid1()
+    return unique_id
 
-def isUUIDExist(mode, uniqueID):
+def isUUIDExist(mode, unique_id):
     if mode == 'answer':
-        data = connection.readAllAnswer(answers_file_name)
-        if data == []:
+        answers = connection.readAllAnswer(answers_file_name)
+        if answers == []:
             return 1
-        for elem in data:
-            if uniqueID != elem['id']:
+        for answer in answers:
+            if unique_id != answer['id']:
                 return 1
     if mode == 'question':
-        data = connection.readAllQuestion(questions_file_name)
-        if data == []:
+        questions = connection.readAllQuestion(questions_file_name)
+        if questions == []:
             return 1
-        for elem in data:
-            if uniqueID != elem['id']:
+        for question in questions:
+            if unique_id != question['id']:
                 return 1
     return 0
 
@@ -116,62 +116,70 @@ def voteCountViewsFix(question):
 
 # switches 1 line in question database with the new given question
 def updateQuestion(question):
-    data = connection.readAllQuestion(questions_file_name)
-    for elem in data:
-        if elem['id'] == question['id']:
-            data[data.index(elem)] = question
+    questions = connection.readAllQuestion(questions_file_name)
+    for question in questions:
+        if question['id'] == question['id']:
+            questions[questions.index(question)] = question
             break
-    connection.updateQuestion(questions_file_name, data)
+    connection.updateQuestion(questions_file_name, questions)
     return
 
 
-def deleteQuestion(qID):
-    question = connection.readQuestion(questions_file_name, qID)
+# ----------------------------------------------------------
+#                   deletes
+# ----------------------------------------------------------
+def deleteQuestion(question_id):
+    question = connection.readQuestion(questions_file_name, question_id)
     questions = connection.readAllQuestion(questions_file_name)
     questions.remove(question)
     connection.updateQuestion(questions_file_name, questions)
-    deleteAnswersByQuestion(qID)
+    deleteAnswersByQuestion(question_id)
     return
 
-def deleteAnswersByQuestion(qID):
+def deleteAnswersByQuestion(question_id):
     answers = connection.readAllAnswer(answers_file_name)
-    answers = [answer for answer in answers if answer['question_id'] != qID]
+    answers = [answer for answer in answers if answer['question_id'] != question_id]
     connection.updateAnswer(answers_file_name, answers)
     return
 
 
-def deleteAnswer(aID):
-    answer = connection.readAnswer(answers_file_name, aID)
+def deleteAnswer(answer_id):
+    answer = connection.readAnswer(answers_file_name, answer_id)
     answers = connection.readAllAnswer(answers_file_name)
     answers.remove(answer)
     connection.updateAnswer(answers_file_name, answers)
     return answer['question_id']
 
 
-# vote up
-def voteSend(answer):
-    data = connection.readAllAnswer(answers_file_name)
-    for elem in data:
-        if elem['id'] == answer['id']:
-            data[data.index(elem)] = answer
-    connection.updateAnswer(answers_file_name, data)
+# ----------------------------------------------------------
+#                   answer voting
+# ----------------------------------------------------------
+def voteAnswerSend(answer):
+    answers = connection.readAllAnswer(answers_file_name)
+    for answer in answers:
+        if answer['id'] == answer['id']:
+            answers[answers.index(answer)] = answer
+    connection.updateAnswer(answers_file_name, answers)
     return
 
-def voteUp(aID):
-    answer = connection.readAnswer(answers_file_name, aID)
+def voteAnswerUp(answer_id):
+    answer = connection.readAnswer(answers_file_name, answer_id)
     answer['vote_number'] = int(answer['vote_number'])+1
-    voteSend(answer)
+    voteAnswerSend(answer)
     voteCountViewsFix(connection.readQuestion(questions_file_name, answer['question_id']))
     return answer['question_id']
 
-def voteDown(aID):
-    answer = connection.readAnswer(answers_file_name, aID)
+def voteAnswerDown(answer_id):
+    answer = connection.readAnswer(answers_file_name, answer_id)
     answer['vote_number'] = int(answer['vote_number'])-1
-    voteSend(answer)
+    voteAnswerSend(answer)
     voteCountViewsFix(connection.readQuestion(questions_file_name, answer['question_id']))
     return answer['question_id']
 
 
+# ----------------------------------------------------------
+#                   edit question
+# ----------------------------------------------------------
 def editQuestion(form, question_id):
     question = connection.readQuestion(questions_file_name, question_id)
     questions = connection.readAllAnswer(questions_file_name)
