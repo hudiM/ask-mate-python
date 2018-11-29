@@ -126,6 +126,13 @@ def updateQuestion(question):
     connection.updateAllQuestions(questions_file_name, questions)
     return
 
+def updateAnswer(answer):
+    answers = connection.readAllAnswer(answers_file_name)
+    for answer_elem in answers:
+        if answer['id'] == answer_elem['id']:
+            answers[answers.index(answer_elem)] = answer
+    connection.updateAllAnswers(answers_file_name, answers)
+    return
 
 # ----------------------------------------------------------
 #                   deletes
@@ -141,7 +148,7 @@ def deleteQuestion(question_id):
 def deleteAnswersByQuestion(question_id):
     answers = connection.readAllAnswer(answers_file_name)
     answers = [answer for answer in answers if answer['question_id'] != question_id]
-    connection.updateAnswer(answers_file_name, answers)
+    connection.updateAllAnswers(answers_file_name, answers)
     return
 
 
@@ -149,32 +156,25 @@ def deleteAnswer(answer_id):
     answer = connection.readAnswer(answers_file_name, answer_id)
     answers = connection.readAllAnswer(answers_file_name)
     answers.remove(answer)
-    connection.updateAnswer(answers_file_name, answers)
+    connection.updateAllAnswers(answers_file_name, answers)
     return answer['question_id']
 
 
 # ----------------------------------------------------------
 #                   answer voting
 # ----------------------------------------------------------
-def voteAnswerSend(answer):
-    answers = connection.readAllAnswer(answers_file_name)
-    for answer_elem in answers:
-        if answer['id'] == answer_elem['id']:
-            answers[answers.index(answer_elem)] = answer
-    connection.updateAnswer(answers_file_name, answers)
-    return
 
 def voteAnswerUp(answer_id):
     answer = connection.readAnswer(answers_file_name, answer_id)
     answer['vote_number'] = int(answer['vote_number'])+1
-    voteAnswerSend(answer)
+    updateAnswer(answer)
     voteCountViewsFix(connection.readQuestion(questions_file_name, answer['question_id']))
     return answer['question_id']
 
 def voteAnswerDown(answer_id):
     answer = connection.readAnswer(answers_file_name, answer_id)
     answer['vote_number'] = int(answer['vote_number'])-1
-    voteAnswerSend(answer)
+    updateAnswer(answer)
     voteCountViewsFix(connection.readQuestion(questions_file_name, answer['question_id']))
     return answer['question_id']
 

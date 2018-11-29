@@ -126,8 +126,8 @@ def addAnswer(filename, data):
     return
 
 
-def updateAnswer(filename, data):
+def updateAllAnswers(filename, answers):
     createAnswerDatabase()
-    for elem in data:
-        addAnswer(filename, elem)
+    for answer in answers:
+        addAnswer(filename, answer)
     return
