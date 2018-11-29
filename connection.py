@@ -59,10 +59,10 @@ def addQuestion(filename, data):
     return
 
 # data = list of dictionaries [{}, {}]
-def updateQuestion(filename, data):
+def updateAllQuestions(filename, questions):
     createQuestionDatabase()
-    for elem in data:
-        addQuestion(filename, elem)
+    for question in questions:
+        addQuestion(filename, question)
     return
 
 ###############################################################

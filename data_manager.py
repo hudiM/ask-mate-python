@@ -25,7 +25,7 @@ def createDebugDatabase():
     connection.createQuestionDatabase()
     connection.createAnswerDatabase()
     connection.addQuestion(questions_file_name, {'id': 0, 'submission_time': '1543395761.9055753', 'view_number': 15, 'vote_number': 50, 'title': 'Da question', 'message': 'This is the question', 'image': 'https://cdn.betterttv.net/emote/5b77ac3af7bddc567b1d5fb2/2x' })
-    connection.addQuestion(questions_file_name, {'id': 1, 'submission_time': '1563395761.9055753', 'view_number': 5, 'vote_number': 25, 'title': 'Wut', 'message': 'FeelsGoodMan', 'image': 'https://cdn.betterttv.net/emote/56c2cff2d9ec6bf744247bf1/2x' })
+    connection.addQuestion(questions_file_name, {'id': 1, 'submission_time': '1513395761.9055753', 'view_number': 5, 'vote_number': 25, 'title': 'Wut', 'message': 'FeelsGoodMan', 'image': 'https://cdn.betterttv.net/emote/56c2cff2d9ec6bf744247bf1/2x' })
     connection.addQuestion(questions_file_name, {'id': 2, 'submission_time': '1523395761.9055753', 'view_number': 5, 'vote_number': 25, 'title': 'EZ', 'message': 'EZy', 'image': 'https://cdn.betterttv.net/emote/5b1740221c5a6065a7bad4b5/2x' })
     connection.addAnswer(answers_file_name, {'id': 0, 'submission_time': '1543395761.9055753', 'vote_number': 15, 'question_id': 0, 'message': 'This is an answer', 'image': 'https://cdn.betterttv.net/emote/55c845ecde06d3181ad07b19/2x'})
     connection.addAnswer(answers_file_name, {'id': 1, 'submission_time': '1543395761.9055753', 'vote_number': 5, 'question_id': 0, 'message': 'This is more answer', 'image': 'https://cdn.betterttv.net/emote/5678a310bf317838643c8188/2x'})
@@ -80,7 +80,7 @@ def addNewAnswer(form, question_id):
 # mode = question/answer
 def newUUID(mode):
     unique_id = uuid.uuid1()
-    while(not isUUIDExist(mode, unique_id)):
+    while(isUUIDExist(mode, unique_id)):
         unique_id = uuid.uuid1()
     return unique_id
 
@@ -88,21 +88,23 @@ def isUUIDExist(mode, unique_id):
     if mode == 'answer':
         answers = connection.readAllAnswer(answers_file_name)
         if answers == []:
-            return 1
+            return 0
         for answer in answers:
-            if unique_id != answer['id']:
+            if unique_id == answer['id']:
                 return 1
     if mode == 'question':
         questions = connection.readAllQuestion(questions_file_name)
         if questions == []:
-            return 1
+            return 0
         for question in questions:
-            if unique_id != question['id']:
+            if unique_id == question['id']:
                 return 1
     return 0
 
 
-# adds one to the question's view count
+# ----------------------------------------------------------
+#                   views
+# ----------------------------------------------------------
 def countViews(question):
     question['view_number'] = int(question['view_number'])+1
     updateQuestion(question)
@@ -117,11 +119,11 @@ def voteCountViewsFix(question):
 # switches 1 line in question database with the new given question
 def updateQuestion(question):
     questions = connection.readAllQuestion(questions_file_name)
-    for question in questions:
-        if question['id'] == question['id']:
-            questions[questions.index(question)] = question
+    for question_elem in questions:
+        if question_elem['id'] == question['id']:
+            questions[questions.index(question_elem)] = question
             break
-    connection.updateQuestion(questions_file_name, questions)
+    connection.updateAllQuestions(questions_file_name, questions)
     return
 
 
@@ -132,7 +134,7 @@ def deleteQuestion(question_id):
     question = connection.readQuestion(questions_file_name, question_id)
     questions = connection.readAllQuestion(questions_file_name)
     questions.remove(question)
-    connection.updateQuestion(questions_file_name, questions)
+    connection.updateAllQuestions(questions_file_name, questions)
     deleteAnswersByQuestion(question_id)
     return
 
@@ -156,9 +158,9 @@ def deleteAnswer(answer_id):
 # ----------------------------------------------------------
 def voteAnswerSend(answer):
     answers = connection.readAllAnswer(answers_file_name)
-    for answer in answers:
-        if answer['id'] == answer['id']:
-            answers[answers.index(answer)] = answer
+    for answer_elem in answers:
+        if answer['id'] == answer_elem['id']:
+            answers[answers.index(answer_elem)] = answer
     connection.updateAnswer(answers_file_name, answers)
     return
 
@@ -178,6 +180,31 @@ def voteAnswerDown(answer_id):
 
 
 # ----------------------------------------------------------
+#                   question voting
+# ----------------------------------------------------------
+
+
+def voteQuestion(mode, question_id):
+    question = connection.readQuestion(questions_file_name, question_id)
+    if mode == 'up':
+        question['vote_number'] = int(question['vote_number']) + 1
+    elif mode == 'down':
+        question['vote_number'] = int(question['vote_number']) - 1
+    updateNewQuestion(question)
+    voteCountViewsFix(question)
+    return
+
+
+def updateNewQuestion(question):
+    questions = connection.readAllQuestion(questions_file_name)
+    for question_elem in questions:
+        if question_elem['id'] == question['id']:
+            questions[questions.index(question_elem)] = question
+    connection.updateAllQuestions(questions_file_name, questions)
+    return
+
+
+# ----------------------------------------------------------
 #                   edit question
 # ----------------------------------------------------------
 def editQuestion(form, question_id):
@@ -188,5 +215,5 @@ def editQuestion(form, question_id):
     question['message'] = form['message']
     question['image'] = form['image']
     questions[number] = question
-    connection.updateQuestion(questions_file_name, questions)
+    connection.updateAllQuestions(questions_file_name, questions)
     return

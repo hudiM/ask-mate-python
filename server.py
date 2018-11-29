@@ -75,6 +75,17 @@ def route_vote_up(answer_id):
 def route_vote_down(answer_id):
     question_id = data_manager.voteAnswerDown(answer_id)
     return redirect('/question/'+question_id)
+
+@app.route('/question/<question_id>/vote-up')
+def route_vote_up_question(question_id):
+    data_manager.voteQuestion('up', question_id)
+    return redirect('/question/'+question_id)
+
+@app.route('/question/<question_id>/vote-down')
+def route_vote_down_question(question_id):
+    data_manager.voteQuestion('down', question_id)
+    return redirect('/question/'+question_id)
+
 # ------------------------
 #           debug
 # ------------------------

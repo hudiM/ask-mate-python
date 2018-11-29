@@ -9,8 +9,23 @@
 <a href="/settings">Settings</a> <i>Debug</i><br>
 <a href="/add-question">Ask a question</a>
 <h3>Questions</h3>
-{% for question in questions %}
-    <img src="{{ question["image"] }}" height="24" width="24"> <a href="/question/{{ question['id'] }}">{{ question['title'] }}</a><br>
-{% endfor %}
+
+<table>
+    <tr>
+        <td></td>
+        <th><font size="1">Views</font></th>
+        <th><font size="1">Votes</font></th>
+        <td></td>
+    </tr>
+    {% for question in questions %}
+        <tr>
+            <td><img src="{{ question["image"] }}" height="24" width="24"></td>
+            <td><font size="2"><center>{{ question['view_number'] }}</center></font></td>
+            <td><font size="2"><center>{{ question['vote_number'] }}</center></font></td>
+            <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+        </tr>
+    {% endfor %}
+</table>
+
 </body>
 </html>

@@ -12,16 +12,18 @@
         <tr>
             <th>Edit</th>
             <th>Delete</th>
+            <th>Views</th>
+            <th>Votes</th>
+            <td><a href="/question/{{ question['id'] }}/vote-up"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Up.png"></a></td>
             <th>Submission time</th>
-            <th>View number</th>
-            <th>Sum of votes</th>
         </tr>
         <tr>
             <td><a href="/question/{{ question['id'] }}/edit"><img src="http://files.softicons.com/download/toolbar-icons/funktional-icons-by-creative-freedom/png/16x16/Edit.png"></a></td>
             <td><a href="/question/{{ question['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="16" width="16"></a></td>
-            <td><center>{{ question["submission_time"] }}</center></td>
             <td><center>{{ question["view_number"] }}</center></td>
             <td><center>{{ question["vote_number"] }}</center></td>
+            <td><a href="/question/{{ question['id'] }}/vote-down"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Down.png"></a></td>
+            <td><center>{{ question["submission_time"] }}</center></td>
         </tr>
     </table>
     </font>
