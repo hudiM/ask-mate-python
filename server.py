@@ -12,7 +12,8 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/list')
 def route_index():
-    questions = connection.readAllQuestion(data_manager.questions_file_name)
+    print('a')
+    questions = data_manager.get_all_questions()
     questions = sorted(questions,key=lambda k: k['submission_time'], reverse=True)
     return render_template('list.html', questions = questions)
 
@@ -28,11 +29,11 @@ def route_add_question():
 
 @app.route('/question/<question_id>')
 def route_question(question_id):
-    question = connection.readQuestion(data_manager.questions_file_name, question_id)
-    question = data_manager.countViews(question)
-    question = data_manager.convertTime(question)
-    answers = data_manager.getAnswersForQuestion(data_manager.answers_file_name, question_id)
-    return render_template('question.html', question=question, answers = answers)
+    question = data_manager.get_question_by_id(question_id)
+    # question = data_manager.countViews(question)
+    # question = data_manager.convertTime(question)
+    answers = data_manager.get_answers_by_question_id(question_id)
+    return render_template('question.html', question=question[0], answers = answers)
 
 
 @app.route('/question/<question_id>/delete')
@@ -51,17 +52,16 @@ def route_answer_delete(answer_id):
 def route_question_edit(question_id):
     if request.method == 'POST':
         form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
-        data_manager.editQuestion(form, question_id)
+        data_manager.edit_question(form, question_id)
         return redirect('/question/'+question_id)
-    question = connection.readQuestion(data_manager.questions_file_name, question_id)
+    question = data_manager.get_question_by_id(question_id)
     return render_template('new_question.html', question = question)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET','POST'])
 def route_new_answer(question_id):
     if request.method == 'POST':
-        form = {'message': request.form['message'], 'image': request.form['image']}
-        data_manager.addNewAnswer(form, question_id)
+        data_manager.new_answer(request.form, question_id)
         return redirect('/question/'+str(question_id))
     return render_template('new_answer.html', question_id = question_id)
 
