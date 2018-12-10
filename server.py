@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, session
+from flask import Flask, render_template, redirect, request, session, url_for
 import data_manager
 import connection
 
@@ -69,7 +69,7 @@ def route_new_answer(question_id):
 @app.route('/answer/<answer_id>/vote-up')
 def route_vote_up(answer_id):
     question_id = data_manager.voteAnswerUp(answer_id)
-    return redirect('/question/'+question_id)
+    return redirect(url_for('route_question', question_id=question_id))
 
 @app.route('/answer/<answer_id>/vote-down')
 def route_vote_down(answer_id):
