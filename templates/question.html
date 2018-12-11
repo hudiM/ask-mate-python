@@ -1,52 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ question['title'] }}</title>
-</head>
-<body>
-    <a href="/">index</a>  <small><i>debug</i></small>
+{% extends "layout.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    <div>
+
+    </div>
     <h1>{{ question["title"] }}</h1>
     <p>{{ question["message"] }}</p>
-    <font size="2">
     <table>
         <tr>
             <th>Edit</th>
             <th>Delete</th>
             <th>Views</th>
             <th>Votes</th>
-            <td><a href="/question/{{ question['id'] }}/vote-up"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Up.png"></a></td>
+            <td><a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="16" width="16"></a></td>
             <th>Submission time</th>
         </tr>
         <tr>
-            <td><a href="/question/{{ question['id'] }}/edit"><img src="http://files.softicons.com/download/toolbar-icons/funktional-icons-by-creative-freedom/png/16x16/Edit.png"></a></td>
-            <td><a href="/question/{{ question['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="16" width="16"></a></td>
+            <td><a href="/question/{{ question['id'] }}/edit"><img src="/static/images/Edit.png" height="16" width="16"></a></td>
+            <td><a href="/question/{{ question['id'] }}/delete"><img src="/static/images/Delete.png" height="16" width="16"></a></td>
             <td><center>{{ question["view_number"] }}</center></td>
             <td><center>{{ question["vote_number"] }}</center></td>
-            <td><a href="/question/{{ question['id'] }}/vote-down"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Down.png"></a></td>
+            <td><a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="16" width="16"></a></td>
             <td><center>{{ question["submission_time"] }}</center></td>
         </tr>
     </table>
-    </font>
-    <h3>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h3>
-    {% for answer in answers %}
-        <p><img src="{{ answer["image"] }}" height="24" width="24"> {{ answer["message"] }}</p>
-        <font size="2">
+    <h3>Comments [<a href="/question/{{ question["id"] }}/new-comment">new</a>]</h3>
+    {% for comment in question_comments %}
+        <p>{{ comment['message'] }}</p>
         <table>
             <tr>
+                <td>Edit</td>
                 <td>Delete</td>
-                <td>Votes</td>
-                <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Up.png"></a></td>
                 <td>Submission time</td>
             </tr>
             <tr>
-                <td><center><a href="/answer/{{ answer['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="12" width="12"></a></center></td>
+                <td><center><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></center></td>
+                <td><center><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></center></td>
+                <td>{{ comment['submission_time'] }}</td>
+            </tr>
+        </table>
+    {% endfor %}
+    <h3>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h3>
+    {% for answer in answers %}
+        <p><img src="{{ answer["image"] }}" height="24" width="24"> {{ answer["message"] }}</p>
+        <table>
+            <tr>
+                <td>Edit</td>
+                <td>Delete</td>
+                <td>Votes</td>
+                <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png"></a></td>
+                <td>Submission time</td>
+            </tr>
+            <tr>
+                <td><center><a href="/answer/{{ answer['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></center></td>
+                <td><center><a href="/answer/{{ answer['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></center></td>
                 <td><center>{{ answer["vote_number"] }}</center></td>
-                <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Down.png"></a></td>
+                <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png"></a></td>
                 <td><center>{{ answer["submission_time"] }}</center></td>
             </tr>
         </table>
-        </font>
+        <h5>Comments[<a href="/answer/{{ answer["id"] }}/new-comment">new</a>]</h5>
+        {% for comments in answer_comments %}
+        {% for comment in comments %}
+            {% if comment['answer_id'] == answer['id'] %}
+                <p>{{ comment['message'] }}</p>
+                <table>
+                    <tr>
+                        <td>Edit</td>
+                        <td>Delete</td>
+                        <td>Submission time</td>
+                    </tr>
+                    <tr>
+                        <td><center><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></center></td>
+                        <td><center><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></center></td>
+                        <td>{{ comment['submission_time'] }}</td>
+                    </tr>
+                </table>
+            {% endif %}
+        {% endfor %}
+        {% endfor %}
     {% endfor %}
-</body>
-</html>
+    {% include 'footer.html' %}
+{% endblock %}

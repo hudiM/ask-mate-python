@@ -1,0 +1,121 @@
+
+/* ------------------------
+            layout
+   ------------------------ */
+
+body {
+    background: url("/static/images/bg.jpg") no-repeat;
+    background-color: black;
+    color: whitesmoke;
+    font-family: Helvetica ,Arial, serif;
+}
+
+.content-wrapper {
+    margin: 60px 20% 0 20%;
+    padding: 2% 5% 2% 5%;
+    border-radius: 25px;
+    background-color: rgba(0,0,0,0.8);
+}
+
+footer{
+    color: lightskyblue;
+    margin-top: 50px;
+    font-size: x-small;
+}
+
+nav{
+    margin: 30px;
+}
+
+.user{
+    border-bottom: skyblue solid 1px;
+}
+.user:last-child{
+    border-bottom: 0;
+}
+
+ul.list {
+    list-style: none; /* Remove default bullets */
+    padding-inline-start: 0px;
+}
+
+ul.list li::before {
+    content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+    color: deepskyblue; /* Change the color */
+    font-weight: bold; /* If you want it to be bold */
+    display: inline-block; /* Needed to add space between the bullet and the text */
+    padding: 3px;
+}
+
+/* ------------------------
+         navigation
+   ------------------------ */
+
+a{
+    color: skyblue;
+    background: transparent;
+}
+
+#links li{
+    display: inline-block;
+}
+
+#links ul{
+    list-style-type: none;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#links li a:link, li a:visited{
+    border-bottom: solid 3px skyblue;
+    display: inline-block;
+    color: skyblue;
+    text-align: center;
+    padding: 14px 16px;
+    margin: 5px;
+    text-decoration: none;
+}
+
+#links li a:hover{
+    background: rgba(120,120,120,0.3);
+    border-bottom: solid 3px deepskyblue;
+    color: deepskyblue;
+}
+
+.active a:link {
+    background: rgba(120, 120, 120, 0.3);
+}
+
+/* ------------------------
+            input
+   ------------------------ */
+
+#custom_submit{
+	color: darkgrey;
+    margin-top: 5px;
+	padding: 3px;
+	border: 2px solid dimgrey;
+	background-color: rgba(0,0,0,0.8);
+}
+
+#custom_submit_line{
+	color: darkgrey;
+	padding: 3px;
+	border: 1px solid dimgrey;
+	background-color: rgba(0,0,0,0.8);
+}
+
+input {
+	color: darkgrey;
+	padding: 3px 3px;
+	border: 1px solid dimgrey;
+	background-color: rgba(0,0,0,0.8);
+}
+input:hover {
+	color: #FFFFFF;
+}
+input:active {
+	color: darkgrey;
+}

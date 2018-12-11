@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>New Answer</title>
-</head>
-<body>
-<form method="post">
-    <label id="message">Answer:</label><br>
-    <textarea id="message" name="message" minlength="1"></textarea><br>
-    <label id="image">Image:</label><br>
-    <input type="text" id="image" name="image"><br>
-    <input type="submit">
-</form>
-<a href="/question/{{ question_id }}">Back</a>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <label id="message">Answer:</label><br>
+        <textarea id="message" name="message" minlength="1">{% if answer != None %}{{ answer['message'] }}{% endif %}</textarea><br>
+        <label id="image">Image:</label><br>
+        <input type="text" id="image" name="image" {% if answer != None %}value="{{ answer['image'] }}"{% endif %}><br>
+        <input type="submit">
+    </form>
+    <a href="/question/{% if answer == None %}{{ question_id }}{% else %}{{ answer['question_id'] }}{% endif %}">Back</a>
+    {% include 'footer.html' %}
+{% endblock %}

@@ -1,31 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>AskMate</title>
-</head>
-<body>
-<h3>AskMate</h3>
-<a href="/settings">Settings</a>  <small><i>Debug</i></small><br>
-<a href="/add-question">Ask a question</a>
-<h3>Questions</h3>
+{% extends "layout.html" %}
 
-<table>
-    <tr>
-        <td></td>
-        <th><font size="1">Views</font></th>
-        <th><font size="1">Votes</font></th>
-        <td></td>
-    </tr>
-    {% for question in questions %}
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    <h3>AskMate</h3>
+    <a href="/add-question">Ask a question</a>
+    <h3>Questions</h3>
+
+    <table>
         <tr>
-            <td><img src="{{ question["image"] }}" height="24" width="24"></td>
-            <td><font size="2"><center>{{ question['view_number'] }}</center></font></td>
-            <td><font size="2"><center>{{ question['vote_number'] }}</center></font></td>
-            <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+            <td></td>
+            <th><font size="1">Views</font></th>
+            <th><font size="1">Votes</font></th>
+            <td></td>
         </tr>
-    {% endfor %}
-</table>
-
-</body>
-</html>
+        {% for question in questions %}
+            <tr>
+                <td><img src="{{ question["image"] }}" height="24" width="24"></td>
+                <td><font size="2"><center>{{ question['view_number'] }}</center></font></td>
+                <td><font size="2"><center>{{ question['vote_number'] }}</center></font></td>
+                <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if index %}<a href="/list">All questions</a>{% endif %}
+    {% include 'footer.html' %}
+{% endblock %}
