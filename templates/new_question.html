@@ -8,9 +8,9 @@
     {% if question == None %}
     <form method="post">
         <label id="title">Title</label><br>
-        <input name="title" id="title" type="text"><br>
+        <input name="title" id="title" type="text" minlength="1"><br>
         <label id="message">Message</label><br>
-        <textarea name="message" id="message"></textarea><br>
+        <textarea name="message" id="message" minlength="1"></textarea><br>
         <label id="image">Image address</label>
         <input name="image" id="image" type="text"><br>
         <input type="submit">
@@ -18,11 +18,11 @@
     {% else %}
     <form method="post">
         <label id="title">Title</label><br>
-        <input name="title" id="title" type="text" value="{{ question['title'] }}"><br>
+        <input name="title" id="title" type="text" value="{{ question['title'] }}" minlength="1"><br>
         <label id="message">Message</label><br>
         <textarea name="message" id="message">{{ question['message'] }}</textarea><br>
         <label id="image">Image address</label>
-        <input name="image" id="image" type="text" value="{{ question['image'] }}"><br>
+        <input name="image" id="image" type="text" value="{{ question['image'] }}" minlength="1"><br>
         <input type="submit">
     </form>
     {% endif %}

@@ -12,7 +12,6 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/list')
 def route_index():
-    print('a')
     questions = data_manager.get_all_questions()
     questions = sorted(questions,key=lambda k: k['submission_time'], reverse=True)
     return render_template('list.html', questions = questions)
@@ -21,38 +20,35 @@ def route_index():
 @app.route('/add-question', methods=['GET', 'POST'])
 def route_add_question():
     if request.method == 'POST':
-        form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
-        unique_id = data_manager.addNewQuestion(form)
-        return redirect('/question/' + str(unique_id))
+        question_id = data_manager.new_question(request.form)
+        return redirect('/question/' + str(question_id['id']))
     return render_template('new_question.html', question = None)
 
 
 @app.route('/question/<question_id>')
 def route_question(question_id):
     question = data_manager.get_question_by_id(question_id)
-    # question = data_manager.countViews(question)
-    # question = data_manager.convertTime(question)
+    data_manager.page_view_counter('up', question_id)
     answers = data_manager.get_answers_by_question_id(question_id)
-    return render_template('question.html', question=question[0], answers = answers)
+    return render_template('question.html', question=question, answers = answers)
 
 
 @app.route('/question/<question_id>/delete')
 def route_question_delete(question_id):
-    data_manager.deleteQuestion(question_id)
+    data_manager.delete_question(question_id)
     return redirect('/')
 
 
 @app.route('/answer/<answer_id>/delete')
 def route_answer_delete(answer_id):
-    question_id = data_manager.deleteAnswer(answer_id)
-    return redirect('/question/'+question_id)
+    question_id = data_manager.delete_answer(answer_id)
+    return redirect('/question/'+ str(question_id))
 
 
 @app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
 def route_question_edit(question_id):
     if request.method == 'POST':
-        form = {'title' : request.form['title'], 'message' : request.form['message'], 'image' : request.form['image']}
-        data_manager.edit_question(form, question_id)
+        data_manager.edit_question(request.form, question_id)
         return redirect('/question/'+question_id)
     question = data_manager.get_question_by_id(question_id)
     return render_template('new_question.html', question = question)
@@ -68,41 +64,23 @@ def route_new_answer(question_id):
 
 @app.route('/answer/<answer_id>/vote-up')
 def route_vote_up(answer_id):
-    question_id = data_manager.voteAnswerUp(answer_id)
+    question_id = data_manager.vote('answer','up',answer_id)
     return redirect(url_for('route_question', question_id=question_id))
 
 @app.route('/answer/<answer_id>/vote-down')
 def route_vote_down(answer_id):
-    question_id = data_manager.voteAnswerDown(answer_id)
-    return redirect('/question/'+question_id)
+    question_id = data_manager.vote('answer','down',answer_id)
+    return redirect(url_for('route_question', question_id=question_id))
 
 @app.route('/question/<question_id>/vote-up')
 def route_vote_up_question(question_id):
-    data_manager.voteQuestion('up', question_id)
+    data_manager.vote('question','up',question_id)
     return redirect('/question/'+question_id)
 
 @app.route('/question/<question_id>/vote-down')
 def route_vote_down_question(question_id):
-    data_manager.voteQuestion('down', question_id)
+    data_manager.vote('question','down',question_id)
     return redirect('/question/'+question_id)
-
-# ------------------------
-#           debug
-# ------------------------
-
-@app.route('/settings')
-def route_settings():
-    return render_template('settings.html')
-
-@app.route('/settings/createNewDatabase')
-def newDatabase():
-    connection.createQuestionDatabase()
-    return redirect('/settings')
-
-@app.route('/settings/createDebugDatabase')
-def debugDatabase():
-    data_manager.createDebugDatabase()
-    return redirect('/settings')
 
 # ------------------------
 #           server
