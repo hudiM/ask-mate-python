@@ -30,7 +30,7 @@ def get_all_questions(cursor):
 
 @connection.connection_handler
 def get_five_questions(cursor):
-    cursor.execute('SELECT * FROM question ORDER BY submission_time LIMIT 5;')
+    cursor.execute('SELECT * FROM question ORDER BY submission_time DESC LIMIT 5;')
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -79,6 +79,16 @@ def get_question_id_by_comment_id(cursor, comment_id):
         return get_question_id_by_answer_id(ids['answer_id'])
     return ids['question_id']
 
+@connection.connection_handler
+def get_tags_by_question_id(cursor, question_id):
+    cursor.execute('SELECT name FROM tag JOIN question_tag ON tag.id=question_tag.tag_id WHERE question_id={0}'.format(question_id))
+    return cursor.fetchall()
+
+@connection.connection_handler
+def get_tags(cursor):
+    cursor.execute('SELECT name,question_id FROM tag JOIN question_tag ON tag.id=question_tag.tag_id')
+    return cursor.fetchall()
+
 # ----------------------------------------------------------
 #                   add
 # ----------------------------------------------------------
@@ -101,6 +111,12 @@ def new_comment(cursor, mode, form, data_id):
     if mode == 'answer':
         cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES ({0},'{1}','{2}','{3}',{4});".format(
             'NULL', data_id, form['message'], str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 'NULL'))
+    return
+
+@connection.connection_handler
+def add_tag(cursor, form, question_id):
+    for tag_id in form:
+        cursor.execute("INSERT INTO question_tag (question_id, tag_id) VALUES ('{0}','{1}') ON CONFLICT DO NOTHING ".format(question_id, tag_id))
     return
 
 # ----------------------------------------------------------
@@ -148,6 +164,10 @@ def delete_comment(cursor, comment_id):
     cursor.execute("DELETE FROM comment WHERE id='{0}';".format(str(comment_id)))
     return question_id
 
+@connection.connection_handler
+def delete_tag(cursor, question_id, tag_id):
+    cursor.execute("DELETE FROM question_tag WHERE question_id={0} AND tag_id={1} ".format(question_id, tag_id))
+    return
 # ----------------------------------------------------------
 #                   vote
 # ----------------------------------------------------------

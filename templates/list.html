@@ -9,19 +9,23 @@
     <a href="/add-question">Ask a question</a>
     <h3>Questions</h3>
 
-    <table>
-        <tr>
-            <td></td>
-            <th><font size="1">Views</font></th>
-            <th><font size="1">Votes</font></th>
-            <td></td>
-        </tr>
+    <table class="lists">
         {% for question in questions %}
             <tr>
-                <td><img src="{{ question["image"] }}" height="24" width="24"></td>
-                <td><font size="2"><center>{{ question['view_number'] }}</center></font></td>
-                <td><font size="2"><center>{{ question['vote_number'] }}</center></font></td>
-                <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+                <td rowspan="2"><img src="{{ question["image"] }}" height="56" width="56"></td>
+                <td class="center">{{ question['view_number'] }}</td>
+                <td class="center">{{ question['vote_number'] }}</td>
+                <td colspan="2"><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+            </tr>
+            <tr>
+                <td class="medium_font center">Views</td>
+                <td class="medium_font center">Votes</td>
+                <td>
+                    {% for tag in tags %}
+                        {% if tag['question_id'] == question['id'] %}<bdi class="tag_{{ tag['name']|safe }} medium_font">{{ tag['name'] }}</bdi>{% endif %}
+                    {% endfor %}
+                </td>
+                <td class="medium_font right">{{ question['submission_time'] }}</td>
             </tr>
         {% endfor %}
     </table>

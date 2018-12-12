@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, session, url_for
+from flask import Flask, render_template, redirect, request, url_for
 import data_manager
 import connection
 
@@ -13,12 +13,21 @@ app = Flask(__name__)
 def route_index():
     questions = data_manager.get_five_questions()
     questions = sorted(questions,key=lambda k: k['submission_time'], reverse=True)
-    return render_template('list.html', questions = questions, index=True)
+    tags = data_manager.get_tags()
+    return render_template('list.html', questions=questions, tags=tags, index=True)
 
 @app.route('/list')
 def route_list():
     questions = data_manager.get_all_questions()
-    return render_template('list.html', questions = questions)
+    tags = data_manager.get_tags()
+    return render_template('list.html', questions = questions, tags=tags)
+
+@app.route('/question/<question_id>/edit-tag', methods=['GET','POST'])
+def route_add_tag(question_id):
+    if request.method == 'POST':
+        data_manager.add_tag(request.form.getlist('tag'), question_id)
+        return redirect(url_for('route_question', question_id=question_id))
+    return render_template('add_tag.html')
 
 @app.route('/add-question', methods=['GET', 'POST'])
 def route_add_question():
@@ -34,10 +43,11 @@ def route_question(question_id):
     data_manager.page_view_counter('up', question_id)
     answers = data_manager.get_answers_by_question_id(question_id)
     question_comments = data_manager.get_comments('question',question_id)
+    tags = data_manager.get_tags_by_question_id(question_id)
     answer_comments = []
     for answer in answers:
         answer_comments.append(data_manager.get_comments('answer', answer['id']))
-    return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments)
+    return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags)
 
 
 @app.route('/question/<question_id>/delete')

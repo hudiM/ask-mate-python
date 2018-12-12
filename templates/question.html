@@ -24,7 +24,11 @@
             {{ question["message"] }}
         </div>
         <div class="q_tags">
-            <bdi class="tag_css">CSS</bdi> <bdi class="tag_sql">SQL</bdi> <bdi class="tag_python">Python</bdi>
+            Tags:
+            {% for tag in tags %}
+                <bdi class="tag_{{ tag['name']|safe }}">{{ tag['name'] }}</bdi>
+            {% endfor %}
+            <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
         </div>
         <div class="q_field">
             <table>
