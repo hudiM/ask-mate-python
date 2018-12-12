@@ -28,6 +28,10 @@
         </tr>
     </table>
     </font>
+    <h3>Comments: [<a href="/question/{{ question['id'] }}/new-comment">Leave your comment</a>] </h3>
+    {% for comment in comments %}
+        <p>{{ comment['message'] }}</p>
+    {% endfor %}
     <h3>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h3>
     {% for answer in answers %}
         <p><img src="{{ answer["image"] }}" height="24" width="24"> {{ answer["message"] }}</p>

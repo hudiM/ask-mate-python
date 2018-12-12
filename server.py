@@ -30,7 +30,8 @@ def route_question(question_id):
     question = data_manager.get_question_by_id(question_id)
     data_manager.page_view_counter('up', question_id)
     answers = data_manager.get_answers_by_question_id(question_id)
-    return render_template('question.html', question=question, answers = answers)
+    comments = data_manager.get_all_comments_by_id(question_id)
+    return render_template('question.html', question=question, answers = answers, comments=comments)
 
 
 @app.route('/question/<question_id>/delete')
@@ -60,6 +61,14 @@ def route_new_answer(question_id):
         data_manager.new_answer(request.form, question_id)
         return redirect('/question/'+str(question_id))
     return render_template('new_answer.html', question_id = question_id)
+
+
+@app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
+def new_question_comment(question_id):
+    if request.method == 'POST':
+        data_manager.new_question_comment(request.form, question_id)
+        return redirect('/question/' + str(question_id))
+    return render_template('comment.html', question_id=question_id)
 
 
 @app.route('/answer/<answer_id>/vote-up')

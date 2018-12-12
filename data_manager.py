@@ -35,16 +35,24 @@ def get_question_by_id(cursor, question_id):
     question = cursor.fetchall()
     return question[0]
 
+
 @connection.connection_handler
 def get_answers_by_question_id(cursor, question_id):
     cursor.execute("SELECT * FROM answer WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
     question = cursor.fetchall()
     return question
 
+
+@connection.connection_handler
+def get_all_comments_by_id(cursor, question_id):
+    cursor.execute("SELECT * FROM comment WHERE question_id={0}".format(question_id))
+    comment = cursor.fetchall()
+    return comment
+
+
 # ----------------------------------------------------------
 #                   add
 # ----------------------------------------------------------
-
 @connection.connection_handler
 def new_answer(cursor, form, question_id):
     cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message, image) VALUES ('{0}',0,'{1}','{2}','{3}');".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id,form['message'],form['image']))
@@ -52,12 +60,17 @@ def new_answer(cursor, form, question_id):
 
 @connection.connection_handler
 def new_question(cursor, form):
-    sql_string = "INSERT INTO question (submission_time, view_number, vote_number, title, message, image) " \
-                 "VALUES ('{0}','0','0','{1}','{2}','{3}')".format(datetime.now(),form['title'],form['message'],form['image'])
-    cursor.execute(sql_string)
-    cursor.execute('SELECT id FROM question ORDER BY submission_time DESC LIMIT 1')
+    cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message, image) VALUES ('{0}',0, 0,'{1}','{2}','{3}');".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),form['title'],form['message'],form['image']))
+    cursor.execute('''SELECT id FROM question ORDER BY submission_time DESC LIMIT 1''')
     question_id = cursor.fetchone()
     return question_id
+
+@connection.connection_handler
+def new_question_comment(cursor, form, question_id):
+    cursor.execute("INSERT INTO comment (question_id, message, submission_time, edited_count) VALUES ('{0}', '{1}', '{2}', 0);".format(question_id, form['comment'], str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
+    return question_id
+
+
 
 # ----------------------------------------------------------
 #                   edit
