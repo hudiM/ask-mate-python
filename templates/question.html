@@ -9,15 +9,21 @@
         <h1 class="q_title">{{ question["title"] }}</h1>
         <div class="q_vote">
             <table>
-                <tr>
-                    <a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>
-                </tr>
-                <tr>
-                    {{ question["vote_number"] }}
-                </tr>
-                <tr>
-                    <a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>
-                </tr>
+                    <tr>
+                        <td>
+                            <a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ question["vote_number"] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>
+                        </td>
+                    </tr>
             </table>
         </div>
         <div class="q_text">
@@ -26,7 +32,15 @@
         <div class="q_tags">
             Tags:
             {% for tag in tags %}
-                <bdi class="tag_{{ tag['name']|safe }}">{{ tag['name'] }}</bdi>
+                {% if tag['color'] == None %}
+                    <bdi class="tag_id">{{ tag['name'] }}</bdi>
+                {% else %}
+                    {% if tag['color_mode'] == None %}
+                        <bdi class="tag_id" style="color: {{ tag['color'] }} !important; border-color: {{ tag['color'] }} !important;">{{ tag['name'] }}</bdi>
+                    {% else %}
+                        <bdi class="{{ tag['color_mode'] }}">{{ tag['name'] }}</bdi>
+                    {% endif %}
+                {% endif %}
             {% endfor %}
             <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
         </div>

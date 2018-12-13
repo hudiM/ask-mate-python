@@ -23,14 +23,46 @@ from datetime import datetime
 #                   get
 # ----------------------------------------------------------
 
+def get_sort(sorting):
+    sort = 'submission_time'
+    direction = 'DESC'
+    if sorting['direction'] == 'ASC':
+        direction = 'ASC'
+    if sorting['sort'] is not None:
+        sort = sorting['sort']
+    return sort, direction
+
 @connection.connection_handler
-def get_all_questions(cursor):
-    cursor.execute('SELECT * FROM question;')
+def get_search_questions(cursor, search, sorting):
+    sort, direction = get_sort(sorting)
+    search = '%'+str(search)+'%'
+    cursor.execute("SELECT question.id FROM question LEFT JOIN answer ON question.id = answer.question_id WHERE (title LIKE %s OR answer.message LIKE %s OR question.message LIKE %s);",(search,search,search))
+    question_ids = cursor.fetchall()
+    print(question_ids)
+    if question_ids != []:
+        ids = []
+        for id in question_ids:
+            ids.append("id='"+str(id['id'])+"'")
+        ids = list(set(ids))
+        sql_string = "SELECT * FROM question WHERE "
+        sql_string += " OR ".join(ids)
+        sql_string += 'ORDER BY {0} {1};'.format(sort, direction)
+        print(sql_string)
+        cursor.execute(sql_string)
+        questions = cursor.fetchall()
+        return questions
+    return None
+
+@connection.connection_handler
+def get_all_questions(cursor, sorting):
+    sort, direction = get_sort(sorting)
+    cursor.execute('SELECT * FROM question ORDER BY {0} {1};'.format(sort, direction))
     return cursor.fetchall()
 
 @connection.connection_handler
-def get_five_questions(cursor):
-    cursor.execute('SELECT * FROM question ORDER BY submission_time DESC LIMIT 5;')
+def get_five_questions(cursor, sorting):
+    sort, direction = get_sort(sorting)
+    cursor.execute('SELECT * FROM question ORDER BY {0} {1} LIMIT 5;'.format(sort, direction))
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -81,12 +113,22 @@ def get_question_id_by_comment_id(cursor, comment_id):
 
 @connection.connection_handler
 def get_tags_by_question_id(cursor, question_id):
-    cursor.execute('SELECT name FROM tag JOIN question_tag ON tag.id=question_tag.tag_id WHERE question_id={0}'.format(question_id))
+    cursor.execute('SELECT name, color, color_mode FROM tag JOIN question_tag ON tag.id=question_tag.tag_id WHERE question_id={0}'.format(question_id))
     return cursor.fetchall()
 
 @connection.connection_handler
 def get_tags(cursor):
-    cursor.execute('SELECT name,question_id FROM tag JOIN question_tag ON tag.id=question_tag.tag_id')
+    cursor.execute('SELECT * FROM tag')
+    return cursor.fetchall()
+
+@connection.connection_handler
+def get_tags_list(cursor):
+    cursor.execute('SELECT name, color, color_mode, question_id FROM tag LEFT JOIN question_tag ON tag.id = question_tag.tag_id')
+    return cursor.fetchall()
+
+@connection.connection_handler
+def get_tags_checked(cursor, question_id): # something
+    cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', question_id)
     return cursor.fetchall()
 
 # ----------------------------------------------------------
@@ -95,28 +137,35 @@ def get_tags(cursor):
 
 @connection.connection_handler
 def new_answer(cursor, form, question_id):
-    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message, image) VALUES ('{0}',0,'{1}','{2}','{3}');".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id,form['message'],form['image']))
+    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message, image) VALUES ('{0}',0,'{1}', %s, %s);".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id),(form['message'],form['image']))
     return
 
 @connection.connection_handler
 def new_question(cursor, form):
-    cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message, image) VALUES ('{0}','0','0','{1}','{2}','{3}');".format(datetime.now(),form['title'],form['message'],form['image']))
+    cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message, image) VALUES ('{0}','0','0', %s, %s,%s);".format(datetime.now()),(form['title'],form['message'],form['image']))
     return get_latest_question_id()
 
 @connection.connection_handler
 def new_comment(cursor, mode, form, data_id):
     if mode == 'question':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES ('{0}',{1},'{2}','{3}',{4});".format(
-            data_id, 'NULL', form['message'], str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 'NULL'))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
+                       (data_id,None,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
     if mode == 'answer':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES ({0},'{1}','{2}','{3}',{4});".format(
-            'NULL', data_id, form['message'], str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 'NULL'))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
+                       (None,data_id,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
     return
 
 @connection.connection_handler
-def add_tag(cursor, form, question_id):
+def manage_tags(cursor, form, question_id):
+    cursor.execute("DELETE FROM question_tag WHERE question_id='{0}';".format(question_id))
     for tag_id in form:
-        cursor.execute("INSERT INTO question_tag (question_id, tag_id) VALUES ('{0}','{1}') ON CONFLICT DO NOTHING ".format(question_id, tag_id))
+        cursor.execute("INSERT INTO question_tag (question_id, tag_id) VALUES ('{0}','{1}') ON CONFLICT DO NOTHING;".format(question_id, tag_id))
+    return
+
+@connection.connection_handler
+def add_tag(cursor, form):
+    print(form)
+    cursor.execute("INSERT INTO tag (name, color, color_mode) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING;", (form['name'],form['color'], None))
     return
 
 # ----------------------------------------------------------
@@ -125,21 +174,25 @@ def add_tag(cursor, form, question_id):
 
 @connection.connection_handler
 def edit_question(cursor, form, question_id):
-    cursor.execute("UPDATE question SET submission_time='{0}',title='{1}',message='{2}',image='{3}' WHERE id={4};".format(
-        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), form['title'], form['message'], form['image'], question_id))
+    cursor.execute("UPDATE question SET submission_time='{0}',title=%s,message=%s,image=%s WHERE id={1};".format(
+        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), question_id),(form['title'], form['message'], form['image']))
     return
 
 @connection.connection_handler
 def edit_answer(cursor, form, answer_id):
-    cursor.execute("UPDATE answer SET submission_time='{0}',message='{1}',image='{2}' WHERE id={3};".format(
-        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),form['message'],form['image'],answer_id))
+    cursor.execute("UPDATE answer SET submission_time='{0}',message=%s,image=%s WHERE id={1};".format(
+        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),answer_id),(form['message'],form['image']))
     return get_question_id_by_answer_id(answer_id)
 
 @connection.connection_handler
 def edit_comment(cursor, form, comment_id):
-    cursor.execute("UPDATE comment SET message='{0}', submission_time='{1}' WHERE id={2};".format(
-        form['message'], str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),comment_id))
+    cursor.execute("UPDATE comment SET message=%s, submission_time=%s WHERE id={0};".format(comment_id),(form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
     return get_question_id_by_comment_id(comment_id)
+
+@connection.connection_handler
+def edit_tag(cursor, form, tag_id):
+    cursor.execute("UPDATE tag SET name=%s, color=%s, color_mode=%s WHERE id={0}".format(tag_id), (form['name'], form['color'], None))
+    return
 
 # ----------------------------------------------------------
 #                   delete
@@ -149,7 +202,7 @@ def edit_comment(cursor, form, comment_id):
 def delete_question(cursor, question_id):
     for answer in get_answers_by_question_id(question_id):
         cursor.execute('DELETE FROM comment WHERE answer_id={0}'.format(answer['id']))
-    cursor.execute("DELETE FROM comment WHERE question_id={0}; DELETE FROM answer WHERE question_id='{0}'; DELETE FROM question WHERE id='{0}';".format(str(question_id)))
+    cursor.execute("DELETE FROM question_tag WHERE question_id={0};DELETE FROM comment WHERE question_id={0}; DELETE FROM answer WHERE question_id='{0}'; DELETE FROM question WHERE id='{0}';".format(str(question_id)))
     return
 
 @connection.connection_handler
@@ -165,9 +218,10 @@ def delete_comment(cursor, comment_id):
     return question_id
 
 @connection.connection_handler
-def delete_tag(cursor, question_id, tag_id):
-    cursor.execute("DELETE FROM question_tag WHERE question_id={0} AND tag_id={1} ".format(question_id, tag_id))
+def delete_tag(cursor,tag_id):
+    cursor.execute("DELETE FROM question_tag WHERE tag_id={0}; DELETE FROM tag WHERE id={0};".format(tag_id))
     return
+
 # ----------------------------------------------------------
 #                   vote
 # ----------------------------------------------------------

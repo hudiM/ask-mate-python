@@ -7,9 +7,9 @@
 {% block content %}
     <form method="post">
         <label id="message">Answer:</label><br>
-        <textarea id="message" name="message" minlength="1">{% if answer != None %}{{ answer['message'] }}{% endif %}</textarea><br>
+        <textarea id="message" name="message" minlength="1" class="custom_submit">{% if answer != None %}{{ answer['message'] }}{% endif %}</textarea><br>
         <label id="image">Image:</label><br>
-        <input type="text" id="image" name="image" {% if answer != None %}value="{{ answer['image'] }}"{% endif %}><br>
+        <input type="text" id="image" name="image" {% if answer != None %}value="{{ answer['image'] }}"{% endif %} size="50"><br>
         <input type="submit">
     </form>
     <a href="/question/{% if answer == None %}{{ question_id }}{% else %}{{ answer['question_id'] }}{% endif %}">Back</a>

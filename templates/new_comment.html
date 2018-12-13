@@ -7,7 +7,7 @@
 {% block content %}
     <form method="post">
         <label id="message">Message</label><br>
-        <textarea name="message" id="message" minlength="1">{% if comment != None %}{{ comment['message'] }}{% endif %}</textarea><br>
+        <textarea name="message" id="message" minlength="1" class="custom_submit">{% if comment != None %}{{ comment['message'] }}{% endif %}</textarea><br>
         <input type="submit">
     </form>
     {% include 'footer.html' %}

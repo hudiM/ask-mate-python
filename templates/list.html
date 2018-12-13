@@ -5,10 +5,55 @@
 {% endblock %}
 
 {% block content %}
+    {% if questions == None %}
+        <div class="center">
+            <img src="/static/images/not_found.gif">
+            <p>We couldn't find what you're looking for. </p>
+            <p>Would you like to ask it? ( No will take you to all questions )</p>
+            <p><a href="/add-question" id="custom_submit_search">Yes</a> <a href="/list" id="custom_submit_search">No</a></p>
+        </div>
+    {% else %}
     <h3>AskMate</h3>
     <a href="/add-question">Ask a question</a>
-    <h3>Questions</h3>
-
+    <h3>
+        <table class="question_sort_table">
+            <td>Questions</td>
+            <td class="right">
+                <table class="question_sort_table_fix right">
+                    <tr>
+                        <td>
+                            <form method="get" id="sorting">
+                                <input type="hidden" name="sort" value="{% if sorting['sort'] == None %}submission_time{% else %}{{ sorting['sort'] }}{% endif %}">
+                                <input type="hidden" name="direction" value="{% if (sorting['direction'] == None) or (sorting['direction'] == 'DESC' ) %}ASC{% else %}DESC{% endif %}">
+                                <input type="submit" value="{% if (sorting['direction'] == None) or (sorting['direction'] == 'DESC' ) %}ASC{% else %}DESC{% endif %}">
+                            </form>
+                        </td>
+                        <td>
+                            <form method="get" id="sorting">
+                                <input type="hidden" name="sort" value="submission_time">
+                                <input type="hidden" name="direction" value="{% if (sorting['direction'] == None) or (sorting['direction'] == 'DESC' ) %}DESC{% else %}ASC{% endif %}">
+                                <input type="submit" value="Date">
+                            </form>
+                        </td>
+                        <td>
+                            <form method="get" id="sorting">
+                                <input type="hidden" name="sort" value="vote_number">
+                                <input type="hidden" name="direction" value="{% if (sorting['direction'] == None) or (sorting['direction'] == 'DESC' ) %}DESC{% else %}ASC{% endif %}">
+                                <input type="submit" value="Votes">
+                            </form>
+                        </td>
+                        <td>
+                            <form method="get" id="sorting">
+                                <input type="hidden" name="sort" value="view_number">
+                                <input type="hidden" name="direction" value="{% if (sorting['direction'] == None) or (sorting['direction'] == 'DESC' ) %}DESC{% else %}ASC{% endif %}">
+                                <input type="submit" value="Views">
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </table>
+    </h3>
     <table class="lists">
         {% for question in questions %}
             <tr>
@@ -22,13 +67,14 @@
                 <td class="medium_font center">Votes</td>
                 <td>
                     {% for tag in tags %}
-                        {% if tag['question_id'] == question['id'] %}<bdi class="tag_{{ tag['name']|safe }} medium_font">{{ tag['name'] }}</bdi>{% endif %}
+                        {% if tag['question_id'] == question['id'] %}<bdi class="tag_id medium_font" style="color: {{ tag['color'] }} !important; border-color: {{ tag['color'] }} !important;">{{ tag['name'] }}</bdi>{% endif %}
                     {% endfor %}
                 </td>
                 <td class="medium_font right">{{ question['submission_time'] }}</td>
             </tr>
         {% endfor %}
     </table>
+    {% endif %}
     {% if index %}<a href="/list">All questions</a>{% endif %}
     {% include 'footer.html' %}
 {% endblock %}
