@@ -322,6 +322,19 @@ input[type="text"] {
     border-spacing: 5px;
 }
 
+.lists_image{
+    width: 5%;
+}
+.lists_votes{
+    width: 5%;
+}
+.lists_views{
+    width: 5%;
+}
+.lists_text{
+    width: 85%;
+}
+
 /* ------------------------
             Common
    ------------------------ */

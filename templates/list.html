@@ -57,10 +57,10 @@
     <table class="lists">
         {% for question in questions %}
             <tr>
-                <td rowspan="2"><img src="{{ question["image"] }}" height="56" width="56"></td>
-                <td class="center">{{ question['view_number'] }}</td>
-                <td class="center">{{ question['vote_number'] }}</td>
-                <td colspan="2"><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+                <td rowspan="2" class="lists_image"><img src="{{ question["image"] }}" height="56" width="56"></td>
+                <td class="center" class="lists_views">{{ question['view_number'] }}</td>
+                <td class="center" class="lists_votes">{{ question['vote_number'] }}</td>
+                <td colspan="2" class="lists_text"><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
             </tr>
             <tr>
                 <td class="medium_font center">Views</td>

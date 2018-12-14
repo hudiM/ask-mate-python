@@ -20,7 +20,7 @@
         <label id="title">Title</label><br>
         <input name="title" id="title" type="text" value="{{ question['title'] }}" minlength="1"><br>
         <label id="message">Message</label><br>
-        <textarea name="message" id="message">{{ question['message'] }}</textarea><br>
+        <textarea name="message" id="message"  minlength="1" class="custom_submit">{{ question['message'] }}</textarea><br>
         <label id="image">Image address</label><br>
         <input name="image" id="image" type="text" value="{{ question['image'] }}" minlength="1" size="50"><br>
         <input type="submit">
