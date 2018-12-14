@@ -3,14 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>New Comment</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
-    <h2>comment</h2>
-    <p>comment</p>
-    <form method="post">
-        <label id="comment">Comment:</label>
-        <textarea id="comment" name="comment" ></textarea><br>
-        <input type="submit">
-    </form>
+<body id="new_comment">
+    {%  if comment == None %}
+        <h2>New Comment</h2>
+        <p>Leave your comment below</p>
+
+        <form method="post">
+            <label id="comment">Comment:</label><br>
+            <textarea id="comment" name="comment" ></textarea><br>
+            <input type="submit">
+        </form>
+    {% else %}
+        <h2>Edit Your Comment</h2>
+        <p>{{ comment['message'] }}</p>
+
+        <form method="post">
+            <label id="comment">Comment:</label><br>
+            <textarea id="comment" name="comment" >{{ comment['message'] }}</textarea><br>
+            <input type="submit">
+        </form>
+    {% endif %}
 </body>
 </html>
+

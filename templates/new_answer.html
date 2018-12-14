@@ -3,15 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>New Answer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
-<form method="post">
-    <label id="message">Answer:</label><br>
-    <textarea id="message" name="message" minlength="1"></textarea><br>
-    <label id="image">Image:</label><br>
-    <input type="text" id="image" name="image"><br>
-    <input type="submit">
-</form>
+<body id="new_answer">
+    {% if answer == None %}
+        <form method="post">
+            <label id="message">Answer:</label><br>
+            <textarea id="message" name="message" minlength="1"></textarea><br>
+            <label id="image">Image:</label><br>
+            <input type="text" id="image" name="image"><br>
+            <input type="submit">
+        </form>
+    {% else %}
+        <form method="post">
+            <label id="message">Answer:</label><br>
+            <textarea id="message" name="message" minlength="1">{{ answer['message'] }}</textarea><br>
+            <label id="image">Image:</label><br>
+            <input type="text" id="image" name="image">{{ answer['image'] }}<br>
+            <input type="submit">
+        </form>
+    {% endif %}
+
 <a href="/question/{{ question_id }}">Back</a>
 </body>
 </html>
