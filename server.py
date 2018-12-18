@@ -37,7 +37,6 @@ def route_question(question_id):
     question_comments = data_manager.get_comments('question',question_id)
     tags = data_manager.get_tags_by_question_id(question_id)
     answer_comments = []
-    print(tags)
     for answer in answers:
         answer_comments.append(data_manager.get_comments('answer', answer['id']))
     return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags)
@@ -52,7 +51,6 @@ def route_edit_tags(question_id):
         data_manager.manage_tags(request.form.getlist('tag'), question_id)
         return redirect(url_for('route_question', question_id=question_id))
     tags = data_manager.get_tags_checked(question_id)
-    print(tags)
     return render_template('add_tag.html', tags=tags)
 
 @app.route('/new-tag', methods=['GET','POST'])

@@ -45,7 +45,7 @@
                         <td>
                             <form method="get" id="sorting">
                                 <input type="hidden" name="sort" value="view_number">
-                                <input type="hidden" name="direction" value="{% if (sorting['direction'] == None) or (sorting['direction'] == 'DESC' ) %}DESC{% else %}ASC{% endif %}">
+                                <input type="hidden" name="direction" value="{{ 'DESC' if (sorting['direction'] == None) or (sorting['direction'] == 'DESC' ) else 'ASC' }}">
                                 <input type="submit" value="Views">
                             </form>
                         </td>

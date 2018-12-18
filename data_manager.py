@@ -164,7 +164,6 @@ def manage_tags(cursor, form, question_id):
 
 @connection.connection_handler
 def add_tag(cursor, form):
-    print(form)
     cursor.execute("INSERT INTO tag (name, color, color_mode) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING;", (form['name'],form['color'], None))
     return
 
