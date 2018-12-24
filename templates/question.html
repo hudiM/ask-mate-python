@@ -15,38 +15,50 @@
             <th>Delete</th>
             <th>Views</th>
             <th>Votes</th>
-            <td><a href="/question/{{ question['id'] }}/vote-up"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Up.png"></a></td>
+            <td><a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Up_Arrow.png" height="15" width="15"></a></td>
             <th>Submission time</th>
         </tr>
         <tr>
-            <td><a href="/question/{{ question['id'] }}/edit"><img src="http://files.softicons.com/download/toolbar-icons/funktional-icons-by-creative-freedom/png/16x16/Edit.png"></a></td>
+            <td><a href="/question/{{ question['id'] }}/edit"><img src="/static/images/Edit_icon.png" height="15" width="15"></a></td>
             <td><a href="/question/{{ question['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="16" width="16"></a></td>
             <td><center>{{ question["view_number"] }}</center></td>
             <td><center>{{ question["vote_number"] }}</center></td>
-            <td><a href="/question/{{ question['id'] }}/vote-down"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Down.png"></a></td>
+            <td><a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Down-Arrow.png" height="15" width="15"></a></td>
             <td><center>{{ question["submission_time"] }}</center></td>
         </tr>
     </table>
     </font>
+    <h3>Comments to this question [<a href="/question/{{ question["id"] }}/new-comment">new</a>]</h3>
+        {% for comment in question_comments %}
+            <p><a href="/comments/{{ comment['id'] }}/edit"><img src="/static/images/Edit_icon.png" height="15" width="15"></a> <a href="/comments/{{ comment['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="12" width="12"></a> {{ comment['message'] }} (edited {{ comment['edited_count'] }} times)</p>
+        {% endfor %}
     <h3>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h3>
     {% for answer in answers %}
-        <p><img src="{{ answer["image"] }}" height="24" width="24"> {{ answer["message"] }}</p>
+        <h4><img src="{{ answer["image"] }}" height="24" width="24"> {{ answer["message"] }}</h4>
         <font size="2">
         <table>
             <tr>
+                <td>Edit</td>
                 <td>Delete</td>
                 <td>Votes</td>
-                <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Up.png"></a></td>
+                <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="/static/images/Up_Arrow.png" height="15" width="15"></a></td>
                 <td>Submission time</td>
             </tr>
             <tr>
+                <td><a href="/answer/{{ answer['id'] }}/edit"><img src="/static/images/Edit_icon.png" height="15" width="15"></a></td>
                 <td><center><a href="/answer/{{ answer['id'] }}/delete"><img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="12" width="12"></a></center></td>
                 <td><center>{{ answer["vote_number"] }}</center></td>
-                <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="http://files.softicons.com/download/toolbar-icons/ravenna-3d-icons-by-double-j-design/png/16x16/Arrow%20Down.png"></a></td>
+                <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="/static/images/Down-Arrow.png" height="15" width="15"></a></td>
                 <td><center>{{ answer["submission_time"] }}</center></td>
             </tr>
         </table>
         </font>
+        <h5>Comments [<a href="/answer/{{ answer['id'] }}/new-comment">new</a>]</h5>
+            {% for comment in comments %}
+                {% if comment['answer_id'] == answer['id'] %}
+                    <p><a href="/comments/{{ comment['id'] }}/edit"><img src="/static/images/Edit_icon.png" height="15" width="15"></a> <a href="/comments/{{ comment['id'] }}/delete"> <img src="https://www.freeiconspng.com/uploads/x-png-18.png" height="12" width="12"> </a>{{ comment['message'] }} ({{ comment['submission_time'] }}) edited {{ comment['edited_count'] }} times</p>
+                {% endif %}
+            {% endfor %}
     {% endfor %}
 </body>
 </html>
