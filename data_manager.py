@@ -41,67 +41,46 @@ def get_latest_questions(cursor):
 
 @connection.connection_handler
 def get_question_by_id(cursor, question_id):
-    cursor.execute("""
-                    SELECT * FROM question WHERE id = %(q_id)s;
-                    """,
-                   {'q_id': question_id})
+    cursor.execute("SELECT * FROM question WHERE id='{0}';".format(question_id))
     question = cursor.fetchall()
     return question[0]
 
 
 @connection.connection_handler
 def get_question_id(cursor, answer_id):
-    cursor.execute("""
-                    SELECT question_id FROM answer 
-                    WHERE id = %(a_id)s;
-                    """,
-                   {'a_id': answer_id})
+    cursor.execute("SELECT question_id FROM answer WHERE id='{0}';".format(answer_id))
     question_id = cursor.fetchone()
     return question_id['question_id']
 
 
 @connection.connection_handler
 def get_answer_by_answer_id(cursor, answer_id):
-    cursor.execute("""
-                    SELECT * FROM answer 
-                    WHERE id = %(a_id)s;
-                    """,
-                   {'a_id': answer_id})
+    cursor.execute("SELECT * FROM answer WHERE id='{0}';".format(answer_id))
     answer = cursor.fetchall()
     return answer[0]
 
 
 @connection.connection_handler
 def get_answers_by_question_id(cursor, question_id):
-    cursor.execute("""
-                    SELECT * FROM answer 
-                    WHERE question_id = %(q_id)s ORDER BY vote_number DESC, submission_time DESC;
-                    """,
-                   {'q_id': question_id})
+    cursor.execute("SELECT * FROM answer WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
     answers = cursor.fetchall()
     return answers
 
 
 @connection.connection_handler
 def get_answer_id(cursor, question_id):
-    cursor.execute("""
-                    SELECT id FROM answer 
-                    WHERE question_id = %(q_id)s;
-                    """,
-                   {'q_id': question_id})
+    # answers = get_answers_by_question_id
+    cursor.execute("SELECT id FROM answer WHERE question_id='{0}';".format(question_id))
     answer_ids = cursor.fetchall()
     return answer_ids
 
 
 @connection.connection_handler
 def get_comments_by_question_id(cursor, question_id):
-    cursor.execute("""
-                    SELECT * FROM comment 
-                    WHERE question_id = %(q_id)s;
-                    """,
-                   {'q_id': question_id})
+    cursor.execute("SELECT * FROM comment WHERE question_id='{0}';".format(question_id))
     comment = cursor.fetchall()
     return comment
+
 
 
 @connection.connection_handler
@@ -113,29 +92,23 @@ def get_comments_by_answer_id(cursor, answer_id):
 
 @connection.connection_handler
 def get_comment_by_comment_id(cursor, comment_id):
-    cursor.execute("""
-                    SELECT * FROM comment
-                    WHERE id = %(c_id)s;
-                    """,
-                   {'c_id': comment_id})
+    cursor.execute("SELECT * FROM comment WHERE id='{0}';".format(comment_id))
     comment = cursor.fetchall()
     return comment[0]
 
 
 @connection.connection_handler
 def get_all_answer_comments(cursor):
-    cursor.execute("""SELECT * FROM comment;""")
+    cursor.execute(
+        sql.SQL("SELECT * FROM comment").format(table=sql.Identifier('comment'))
+    )
     comment = cursor.fetchall()
     return comment
 
 
 @connection.connection_handler
 def get_question_id_by_comment_id(cursor, comment_id):
-    cursor.execute("""
-                    SELECT question_id, answer_id FROM comment
-                    WHERE id = %(c_id)s;
-                    """,
-                   {'c_id': comment_id})
+    cursor.execute("SELECT question_id, answer_id FROM comment WHERE id='{0}';".format(comment_id))
     question_id = cursor.fetchone()
     if question_id['question_id'] == None:
         return get_question_id(question_id['answer_id'])
@@ -151,19 +124,6 @@ def get_question_id_by_comment_id(cursor, comment_id):
 def new_answer(cursor, form, question_id):
     cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message, image) VALUES ('{0}',0,'{1}','{2}','{3}');".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id,form['message'],form['image']))
     return
-
-
-'''
-@database_common.connection_handler
-def get_mentor_names_by_first_name(cursor, first_name):
-    cursor.execute("""
-                    SELECT first_name, last_name FROM mentors
-                    WHERE first_name = %(f_n)s ORDER BY first_name;
-                   """,
-                   {'f_n': first_name})
-    names = cursor.fetchall()
-    return names'''
-
 
 @connection.connection_handler
 def new_question(cursor, form):

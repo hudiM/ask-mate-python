@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>New entry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
+<body id="new_question">
     {% if question == None %}
-    <form method="post">
+    <form method="post" id="new_question_form">
         <label id="title">Title</label><br>
         <input name="title" id="title" type="text" minlength="1"><br>
         <label id="message">Message</label><br>
         <textarea name="message" id="message" minlength="1"></textarea><br>
-        <label id="image">Image address</label>
+        <label id="image">Image address</label><br>
         <input name="image" id="image" type="text"><br>
         <input type="submit">
     </form>
     {% else %}
-    <form method="post">
+    <form method="post" id="new_question_form">
         <label id="title">Title</label><br>
         <input name="title" id="title" type="text" value="{{ question['title'] }}" minlength="1"><br>
         <label id="message">Message</label><br>
-        <textarea name="message" id="message">{{ question['message'] }}</textarea><br>
-        <label id="image">Image address</label>
+        <textarea name="message" id="message" rows="10" cols="50">{{ question['message'] }}</textarea><br>
+        <label id="image">Image address</label><br>
         <input name="image" id="image" type="text" value="{{ question['image'] }}" minlength="1"><br>
         <input type="submit">
     </form>
