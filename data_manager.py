@@ -41,43 +41,66 @@ def get_latest_questions(cursor):
 
 @connection.connection_handler
 def get_question_by_id(cursor, question_id):
-    cursor.execute("SELECT * FROM question WHERE id='{0}';".format(question_id))
+    cursor.execute("""
+                    SELECT * FROM question
+                    WHERE id = %(q_id)s;
+                    """,
+                   {'q_id': question_id})
     question = cursor.fetchall()
     return question[0]
 
 
 @connection.connection_handler
 def get_question_id(cursor, answer_id):
-    cursor.execute("SELECT question_id FROM answer WHERE id='{0}';".format(answer_id))
+    cursor.execute("""
+                    SELECT question_id FROM answer
+                    WHERE id = %(a_id)s;
+                    """,
+                   {'a_id': answer_id})
     question_id = cursor.fetchone()
     return question_id['question_id']
 
 
 @connection.connection_handler
 def get_answer_by_answer_id(cursor, answer_id):
-    cursor.execute("SELECT * FROM answer WHERE id='{0}';".format(answer_id))
+    cursor.execute("""
+                    SELECT * FROM answer
+                    WHERE id = %(a_id)s;
+                    """,
+                   {'a_id': answer_id})
     answer = cursor.fetchall()
     return answer[0]
 
 
 @connection.connection_handler
 def get_answers_by_question_id(cursor, question_id):
-    cursor.execute("SELECT * FROM answer WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
+    cursor.execute("""
+                    SELECT * FROM answer
+                    WHERE question_id = %(q_id)s ORDER BY vote_number DESC, submission_time DESC;
+                    """,
+                   {'q_id': question_id})
     answers = cursor.fetchall()
     return answers
 
 
 @connection.connection_handler
 def get_answer_id(cursor, question_id):
-    # answers = get_answers_by_question_id
-    cursor.execute("SELECT id FROM answer WHERE question_id='{0}';".format(question_id))
+    cursor.execute("""
+                    SELECT id FROM answer
+                    WHERE question_id = %(q_id)s;
+                    """,
+                   {'q_id': question_id})
     answer_ids = cursor.fetchall()
     return answer_ids
 
 
 @connection.connection_handler
 def get_comments_by_question_id(cursor, question_id):
-    cursor.execute("SELECT * FROM comment WHERE question_id='{0}';".format(question_id))
+    cursor.execute("""
+                    SELECT * FROM comment
+                    WHERE question_id = %(q_id)s;
+                    """,
+                   {'q_id': question_id})
     comment = cursor.fetchall()
     return comment
 
@@ -85,30 +108,40 @@ def get_comments_by_question_id(cursor, question_id):
 
 @connection.connection_handler
 def get_comments_by_answer_id(cursor, answer_id):
-    cursor.execute("SELECT * FROM comment WHERE answer_id='{0}';".format(answer_id))
+    cursor.execute("""
+                    SELECT * FROM comment
+                    WHERE answer_id = %(a_id)s;
+                    """,
+                   {'a_id': answer_id})
     comment = cursor.fetchall()
     return comment
 
 
 @connection.connection_handler
 def get_comment_by_comment_id(cursor, comment_id):
-    cursor.execute("SELECT * FROM comment WHERE id='{0}';".format(comment_id))
+    cursor.execute("""
+                    SELECT * FROM comment
+                    WHERE id = %(c_id)s;
+                    """,
+                    {'c_id': comment_id})
     comment = cursor.fetchall()
     return comment[0]
 
 
 @connection.connection_handler
 def get_all_answer_comments(cursor):
-    cursor.execute(
-        sql.SQL("SELECT * FROM comment").format(table=sql.Identifier('comment'))
-    )
+    cursor.execute("""SELECT * FROM comment;""")
     comment = cursor.fetchall()
     return comment
 
 
 @connection.connection_handler
 def get_question_id_by_comment_id(cursor, comment_id):
-    cursor.execute("SELECT question_id, answer_id FROM comment WHERE id='{0}';".format(comment_id))
+    cursor.execute("""
+                    SELECT question_id, answer_id FROM comment
+                    WHERE id = %(c_id)s;
+                    """,
+                   {'c_id': comment_id})
     question_id = cursor.fetchone()
     if question_id['question_id'] == None:
         return get_question_id(question_id['answer_id'])
