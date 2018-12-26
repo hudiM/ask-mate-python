@@ -198,19 +198,31 @@ def new_answer_comment(cursor, form, answer_id):
 
 @connection.connection_handler
 def edit_question(cursor, form, question_id):
-    cursor.execute("UPDATE question SET submission_time='{0}',title='{1}',message='{2}',image='{3}' WHERE id={4};".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), form['title'], form['message'], form['image'], question_id))
+    cursor.execute("""
+                    UPDATE question SET submission_time = %(d_time)s, title = %(title)s, message = %(message)s, image = %(image)s 
+                    WHERE id = %(q_id)s;
+                    """,
+                    {'d_time': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 'title': form['title'], 'message': form['message'], 'image': form['image'], 'q_id': question_id})
     return
 
 
 @connection.connection_handler
 def edit_answer(cursor, form, answer_id):
-    cursor.execute("UPDATE answer SET submission_time='{0}', message='{1}', image='{2}' WHERE id={3};".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), form['message'], form['image'], answer_id))
+    cursor.execute("""
+                    UPDATE answer SET submission_time = %(d_time)s, message = %(message)s, image = %(image)s 
+                    WHERE id = %(a_id)s;
+                    """,
+                    {'d_time': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 'message': form['message'], 'image': form['image'], 'a_id': answer_id})
     return
 
 
 @connection.connection_handler
 def edit_comment(cursor, form, comment_id):
-    cursor.execute("UPDATE comment SET message='{0}', submission_time='{1}', edited_count=edited_count+1 WHERE id={2};".format(form['comment'], str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), comment_id))
+    cursor.execute("""
+                    UPDATE comment SET message = %(comment)s, submission_time = %(s_time)s, edited_count = edited_count + 1
+                    WHERE id = %(c_id)s;
+                    """,
+                    {'comment': form['comment'], 's_time': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 'c_id': comment_id})
 
     return get_question_id_by_comment_id(comment_id)
 
