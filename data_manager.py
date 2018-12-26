@@ -232,20 +232,30 @@ def edit_comment(cursor, form, comment_id):
 
 @connection.connection_handler
 def delete_question(cursor, question_id):
-    cursor.execute("DELETE FROM answer WHERE question_id='{0}'; DELETE FROM question WHERE id='{0}';".format(str(question_id)))
+    cursor.execute("""
+                    DELETE FROM answer WHERE question_id = %(q_id)s; DELETE FROM question WHERE id = %(q_id)s;
+                    """,
+                    {'q_id': str(question_id)})
     return
 
 @connection.connection_handler
 def delete_answer(cursor, answer_id):
-    cursor.execute("SELECT question_id FROM answer WHERE id='{0}';".format(str(answer_id)))
+    cursor.execute("""
+                    SELECT question_id FROM answer WHERE id = %(a_id)s;
+                    """,
+                    {'a_id': str(answer_id)})
     question_id = cursor.fetchone()
-    cursor.execute("DELETE FROM answer WHERE id='{0}';".format(str(answer_id)))
+    cursor.execute("""DELETE FROM answer WHERE id = %(a_id)s;
+                    """,
+                   {'a_id': answer_id})
     return question_id['question_id']
 
 
 @connection.connection_handler
 def delete_comment(cursor, comment_id):
-    cursor.execute("DELETE FROM comment WHERE id='{0}';".format(comment_id))
+    cursor.execute("""DELETE FROM comment WHERE id = %(c_id)s;
+                    """,
+                    {'c_id': comment_id})
     return
 
 # ----------------------------------------------------------
