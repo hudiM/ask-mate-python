@@ -236,6 +236,7 @@ def delete_question(cursor, question_id):
                     DELETE FROM answer WHERE question_id = %(q_id)s; DELETE FROM question WHERE id = %(q_id)s;
                     """,
                     {'q_id': str(question_id)})
+    # BUG: crashes, if there is any comment
     return
 
 @connection.connection_handler
@@ -248,6 +249,7 @@ def delete_answer(cursor, answer_id):
     cursor.execute("""DELETE FROM answer WHERE id = %(a_id)s;
                     """,
                    {'a_id': answer_id})
+    # BUG: crashes, if there is any comment
     return question_id['question_id']
 
 
