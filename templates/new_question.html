@@ -1,31 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>New entry</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body id="new_question">
+{% extends "layout.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
     {% if question == None %}
-    <form method="post" id="new_question_form">
+    <form method="post">
         <label id="title">Title</label><br>
         <input name="title" id="title" type="text" minlength="1"><br>
         <label id="message">Message</label><br>
-        <textarea name="message" id="message" minlength="1"></textarea><br>
+        <textarea name="message" id="message" minlength="1" class="custom_submit"></textarea><br>
         <label id="image">Image address</label><br>
-        <input name="image" id="image" type="text"><br>
+        <input name="image" id="image" type="text" size="50"><br>
         <input type="submit">
     </form>
     {% else %}
-    <form method="post" id="new_question_form">
+    <form method="post">
         <label id="title">Title</label><br>
         <input name="title" id="title" type="text" value="{{ question['title'] }}" minlength="1"><br>
         <label id="message">Message</label><br>
-        <textarea name="message" id="message" rows="10" cols="50">{{ question['message'] }}</textarea><br>
+        <textarea name="message" id="message"  minlength="1" class="custom_submit">{{ question['message'] }}</textarea><br>
         <label id="image">Image address</label><br>
-        <input name="image" id="image" type="text" value="{{ question['image'] }}" minlength="1"><br>
+        <input name="image" id="image" type="text" value="{{ question['image'] }}" minlength="1" size="50"><br>
         <input type="submit">
     </form>
+    <a href="/question/{{ question['id'] }}">back</a>
     {% endif %}
-</body>
-</html>
+    {% include 'footer.html' %}
+{% endblock %}

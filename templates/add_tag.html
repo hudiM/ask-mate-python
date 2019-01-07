@@ -5,11 +5,15 @@
 {% endblock %}
 
 {% block content %}
+    <a href="{{ url_for('route_add_tag') }}">New tag</a>
     <form method="post">
-        <p><input type="checkbox" name="tag" value="1"><bdi class="tag_python">Python</bdi><br></p>
-        <p><input type="checkbox" name="tag" value="2"><bdi class="tag_sql">SQL</bdi><br></p>
-        <p><input type="checkbox" name="tag" value="3"><bdi class="tag_css">CSS</bdi><br></p>
-        <input type="submit">
+        {% for tag in tags %}
+            <p><input type="checkbox" name="tag" value="{{ tag['id'] }}" {% if tag['checked'] %}checked{% endif %}>
+                <bdi class="tag_id" style="color: {{ tag['color'] }} !important; border-color: {{ tag['color'] }} !important;">{{ tag['name'] }}</bdi>
+            <a href="/tag/{{ tag['id'] }}/edit"><img src="/static/images/Edit.png" width="16" height="16"></a>
+            <a href="/tag/{{ tag['id'] }}/delete"><img src="/static/images/Delete.png" width="16" height="16"></a>
+        {% endfor %}
+        <p><input type="submit"></p>
     </form>
 
     {% include 'footer.html' %}

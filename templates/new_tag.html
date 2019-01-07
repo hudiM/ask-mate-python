@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <p>
+            <label id="name">Name:</label>
+            <input type="text" id="name" name="name">
+        </p>
+        <p>
+            <label id="color">Color:</label>
+            <input type="color" id="color" name="color">
+        </p>
+        <input type="submit">
+    </form>
+
+    {% include 'footer.html' %}
+{% endblock %}

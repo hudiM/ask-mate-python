@@ -1,29 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>New Answer</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body id="new_answer">
-    {% if answer == None %}
-        <form method="post">
-            <label id="message">Answer:</label><br>
-            <textarea id="message" name="message" minlength="1"></textarea><br>
-            <label id="image">Image:</label><br>
-            <input type="text" id="image" name="image"><br>
-            <input type="submit">
-        </form>
-    {% else %}
-        <form method="post">
-            <label id="message">Answer:</label><br>
-            <textarea id="message" name="message" minlength="1">{{ answer['message'] }}</textarea><br>
-            <label id="image">Image:</label><br>
-            <input type="text" id="image" name="image">{{ answer['image'] }}<br>
-            <input type="submit">
-        </form>
-    {% endif %}
+{% extends "layout.html" %}
 
-<a href="/question/{{ question_id }}">Back</a>
-</body>
-</html>
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <label id="message">Answer:</label><br>
+        <textarea id="message" name="message" minlength="1" class="custom_submit">{% if answer != None %}{{ answer['message'] }}{% endif %}</textarea><br>
+        <label id="image">Image:</label><br>
+        <input type="text" id="image" name="image" {% if answer != None %}value="{{ answer['image'] }}"{% endif %} size="50"><br>
+        <input type="submit">
+    </form>
+    <a href="/question/{% if answer == None %}{{ question_id }}{% else %}{{ answer['question_id'] }}{% endif %}">Back</a>
+    {% include 'footer.html' %}
+{% endblock %}

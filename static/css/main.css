@@ -30,7 +30,7 @@ body {
 footer{
     color: lightskyblue;
     margin-top: 50px;
-    font-size: x-small;
+    font-size: 5px;
 }
 
 .center{
@@ -40,6 +40,21 @@ footer{
 /* ------------------------
             question
    ------------------------ */
+.question_sort_table{
+    width: 100%;
+}
+.question_sort_table input{
+    width: auto;
+    margin: 0;
+    border-radius: 5px;
+    padding: 7px;
+}
+.question_sort_table_fix{
+    width: 25%;
+    float: right;
+    margin: auto;;
+}
+
 .q_vote{
     grid-column-start: 1;
     grid-column-end: auto;
@@ -56,6 +71,7 @@ footer{
 .q_text{
     grid-column-start: 2;
     grid-column-end: auto;
+    font-size: 20px;
     margin-bottom: 12px;
 }
 .q_tags{
@@ -91,7 +107,7 @@ h1.question{
 
 .question {
     display: grid;
-    grid-template-columns: 40px auto;
+    grid-template-columns: 60px auto;
 }
 
 /* ------------------------
@@ -132,6 +148,8 @@ h1.question{
     grid-column-end: auto;
     grid-row-start: span 2;
     align-content: end;
+    margin-left: 15px;
+    margin-top: 15px;
 }
 .a_user_box table{
     padding: 3px;
@@ -184,23 +202,20 @@ h1.answer{
 /* ------------------------
             tags
    ------------------------ */
-.tag_css{
+.tag_id{
     padding: 2px;
-    color: hotpink;
-    border: hotpink 2px solid;
+    color: white;
+    border: white 2px solid;
     border-radius: 5px;
 }
-.tag_sql{
+
+.tag_rainbow {
     padding: 2px;
-    color: orange;
-    border: orange 2px solid;
-    border-radius: 5px;
-}
-.tag_python{
-    padding: 2px;
-    color: deepskyblue;
-    border: deepskyblue 2px solid;
-    border-radius: 5px;
+    font-weight: bold;
+    -webkit-border-image: -webkit-gradient(linear, left top, left bottom, from(#00abeb), to(#fff), color-stop(0.5, #fff), color-stop(0.5, #66cc00)) 21 30 30 21 repeat repeat;
+    background-image: -webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
+    color:transparent !important;
+    -webkit-background-clip: text;
 }
 /* ------------------------
          navigation
@@ -242,6 +257,22 @@ a{
             input
    ------------------------ */
 
+#custom_submit_search {
+    text-decoration: none;
+	color: darkgrey;
+    margin-top: 5px;
+	padding: 3px;
+	border: 2px solid dimgrey;
+    border-radius: 5px;
+	background-color: rgba(0,0,0,0.8);
+}
+.custom_submit{
+	color: darkgrey;
+    margin-top: 5px;
+	padding: 3px;
+	border: 2px solid dimgrey;
+	background-color: rgba(0,0,0,0.8);
+}
 #custom_submit{
 	color: darkgrey;
     margin-top: 5px;
@@ -273,7 +304,13 @@ input:hover {
 input:active {
 	color: darkgrey;
 }
-
+textarea {
+  width: 60%;
+  height: 150px;
+}
+input[type="text"] {
+    width: 40%;
+}
 /* ------------------------
             input
    ------------------------ */
@@ -283,6 +320,19 @@ input:active {
     vertical-align: middle;
     padding: 0;
     border-spacing: 5px;
+}
+
+.lists_image{
+    width: 5%;
+}
+.lists_votes{
+    width: 5%;
+}
+.lists_views{
+    width: 5%;
+}
+.lists_text{
+    width: 85%;
 }
 
 /* ------------------------
@@ -305,5 +355,5 @@ input:active {
 }
 .img_tag_fix{
     position: relative;
-    top: 4 px;
+    top: 4px;
 }
