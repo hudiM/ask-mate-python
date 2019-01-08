@@ -48,7 +48,7 @@
                 <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
             </p></td>
             <td rowspan="2">
-                <table class="user_display__box">
+                <table class="user_display_box">
                     <tr>
                         <td rowspan="2"><img src="/static/avatars/default.png" width="48" height="48"></td>
                         <td>Username Placeholder</td>
@@ -132,7 +132,7 @@
                 </table>
             </td>
             <td rowspan="2" class="rightaligned">
-                <table class="user_display__box rightaligned">
+                <table class="{% if answer['best_answer'] == True %}user_display_box_best{% else %}user_display_box{% endif %} rightaligned">
                     <tr>
                         <td rowspan="2"><img src="/static/avatars/default.png" width="48" height="48"></td>
                         <td>Username Placeholder</td>

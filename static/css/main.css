@@ -74,7 +74,16 @@ footer{
     border-bottom: 2px lightskyblue solid;
 }
 
-.user_display__box{
+.user_display_box_best{
+    padding: 3px;
+    font-size: 16px;
+    width: 150px;
+    border-bottom: springgreen 2px solid;
+    border-radius: 5px;
+    background-color: rgba(120,120,120,0.2);
+    display: block;
+}
+.user_display_box{
     padding: 3px;
     font-size: 16px;
     width: 150px;
