@@ -126,6 +126,11 @@ def get_tags_checked(cursor, question_id): # something
     cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', question_id)
     return cursor.fetchall()
 
+@connection.connection_handler
+def get_tags_with_question_number(cursor):
+    cursor.execute('SELECT DISTINCT name, color, COUNT(question_id) as amount FROM tag LEFT JOIN question_tag ON tag.id = question_tag.tag_id GROUP BY name, color')
+    return cursor.fetchall()
+
 # ---------------   user   ---------------------------------
 
 @connection.connection_handler

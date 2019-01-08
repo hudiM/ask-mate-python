@@ -4,6 +4,7 @@
             <li class="neko"><img src="/static/images/neko.gif" height="40" width="40"></li>
             <li><a href="{{ url_for('route_index') }}">Index</a></li>
             <li><a href="{{ url_for('route_list') }}">Questions</a></li>
+            <li><a href="{{ url_for('route_get_tags') }}">Tags</a></li>
             <li><form method="get" action="/search-result"><input type="text" placeholder="Search.." class="nav" name="search"><input type="submit" name="s"></form></li>
         </ul>
     </div>
