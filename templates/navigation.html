@@ -9,8 +9,8 @@
     </div>
     <div class="nav_user">
         <ul>
-            {% if logindata['okey'] == True %}
-                <li>{{ logindata['username'] }}</li>
+            {% if login_data['okey'] == True %}
+                <li>{{ login_data['username'] }}</li>
                 <li><a href="{{ url_for('route_user_logout') }}">Logout</a></li>
             {% else %}
                 <li><a href="{{ url_for('route_user_login') }}">Login</a></li>

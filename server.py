@@ -24,7 +24,7 @@ def route_index():
     sorting = {'direction': request.args.get('direction'),'sort': request.args.get('sort')}
     questions = data_manager.get_five_questions(sorting)
     tags = data_manager.get_tags_list()
-    return render_template('list.html', questions=questions, tags=tags, index=True, sorting=sorting, logindata = login_data)
+    return render_template('list.html', questions=questions, tags=tags, index=True, sorting=sorting, login_data = login_data)
 
 @app.route('/list')
 def route_list():
