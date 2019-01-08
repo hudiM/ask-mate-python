@@ -59,6 +59,13 @@ def route_question(question_id):
 #                   user
 # ----------------------------------------------------------
 
+@app.route('/users')
+def route_user_list():
+    login_data = check_login()
+    users = data_manager.get_all_user()
+    return render_template('users.html', login_data=login_data, users=users)
+
+
 @app.route('/register', methods=('GET','POST'))
 def route_user_register():
     login_data = check_login()

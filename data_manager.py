@@ -39,6 +39,8 @@ def get_search_questions(cursor, search, sorting):
         return questions
     return None
 
+# ---------------   questions   ----------------------------
+
 @connection.connection_handler
 def get_all_questions(cursor, sorting):
     sort, direction = get_sort(sorting)
@@ -56,6 +58,7 @@ def get_question_by_id(cursor, question_id):
     cursor.execute("SELECT * FROM question WHERE ID='{0}';".format(question_id))
     return cursor.fetchall()[0]
 
+# ---------------   answers   ------------------------------
 @connection.connection_handler
 def get_answer(cursor, answer_id):
     cursor.execute("SELECT message, image, question_id FROM answer WHERE id={0};".format(answer_id))
@@ -65,6 +68,8 @@ def get_answer(cursor, answer_id):
 def get_answers_by_question_id(cursor, question_id):
     cursor.execute("SELECT * FROM answer WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
     return cursor.fetchall()
+
+# ---------------   comments   -----------------------------
 
 @connection.connection_handler
 def get_comments(cursor, mode, data_id):
@@ -78,6 +83,8 @@ def get_comments(cursor, mode, data_id):
 def get_comment_by_id(cursor, comment_id):
     cursor.execute("SELECT * FROM comment WHERE id={0};".format(comment_id))
     return cursor.fetchone()
+
+# ---------------   question_id   --------------------------
 
 @connection.connection_handler
 def get_latest_question_id(cursor):
@@ -97,6 +104,8 @@ def get_question_id_by_comment_id(cursor, comment_id):
         return get_question_id_by_answer_id(ids['answer_id'])
     return ids['question_id']
 
+# ---------------   tags   ---------------------------------
+
 @connection.connection_handler
 def get_tags_by_question_id(cursor, question_id):
     cursor.execute('SELECT name, color, color_mode FROM tag JOIN question_tag ON tag.id=question_tag.tag_id WHERE question_id={0}'.format(question_id))
@@ -115,6 +124,13 @@ def get_tags_list(cursor):
 @connection.connection_handler
 def get_tags_checked(cursor, question_id): # something
     cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', question_id)
+    return cursor.fetchall()
+
+# ---------------   user   ---------------------------------
+
+@connection.connection_handler
+def get_all_user(cursor):
+    cursor.execute('SELECT name, creation_date, reputation, image, color FROM users')
     return cursor.fetchall()
 
 # ----------------------------------------------------------
