@@ -5,133 +5,168 @@
 {% endblock %}
 
 {% block content %}
-    <div class="question">
-        <h1 class="q_title">{{ question["title"] }}</h1>
-        <div class="q_vote">
-            <table>
-                    <tr>
-                        <td>
-                            <a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            {{ question["vote_number"] }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>
-                        </td>
-                    </tr>
-            </table>
-        </div>
-        <div class="q_text">
-            {{ question["message"] }}
-        </div>
-        <div class="q_tags">
-            Tags:
-            {% for tag in tags %}
-                {% if tag['color'] == None %}
-                    <bdi class="tag_id">{{ tag['name'] }}</bdi>
-                {% else %}
-                    {% if tag['color_mode'] == None %}
-                        <bdi class="tag_id" style="color: {{ tag['color'] }} !important; border-color: {{ tag['color'] }} !important;">{{ tag['name'] }}</bdi>
+    <h1>{{ question['title'] }}</h1>
+    <table class="max_width question_answer_separator">
+        <tr>
+            <td rowspan="5"><!-- Voting -->
+                <table>
+                        <tr>
+                            <td>
+                                <a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ question["vote_number"] }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>
+                            </td>
+                        </tr>
+                </table>
+            </td>
+            <td>
+                <p class="size_question_message">{{ question["message"] }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p class="size_tag">
+                Tags:
+                {% for tag in tags %}
+                    {% if tag['color'] == None %}
+                        <bdi class="tag_id">{{ tag['name'] }}</bdi>
                     {% else %}
-                        <bdi class="{{ tag['color_mode'] }}">{{ tag['name'] }}</bdi>
+                        {% if tag['color_mode'] == None %}
+                            <bdi class="tag_id" style="color: {{ tag['color'] }} !important; border-color: {{ tag['color'] }} !important;">{{ tag['name'] }}</bdi>
+                        {% else %}
+                            <bdi class="{{ tag['color_mode'] }}">{{ tag['name'] }}</bdi>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-            {% endfor %}
-            <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
-        </div>
-        <div class="q_field">
-            <table>
-                <tr>
-                    <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/edit"><img src="/static/images/Edit.png" height="16" width="16"></a></td>
-                    <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/delete"><img src="/static/images/Delete.png" height="16" width="16"></a></td>
-                    <th>Views</th>
-                    <th>Submission time</th>
-                </tr>
-                <tr>
-                    <td class="center">{{ question["view_number"] }}</td>
-                    <td class="center">{{ question["submission_time"] }}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="q_comment">
-            <h3>Comments [<a href="/question/{{ question["id"] }}/new-comment">new</a>]</h3>
-            {% for comment in question_comments %}
-                <bdi class="q_comment">{{ comment['message'] }}</bdi>
-                <table class="q_user">
+                {% endfor %}
+                <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
+            </p></td>
+            <td rowspan="2">
+                <table class="user_display__box">
                     <tr>
-                        <td class="center"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
-                        <td class="center"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
-                        <td>{{ comment['submission_time'] }}</td>
+                        <td rowspan="2"><img src="/static/avatars/default.png" width="48" height="48"></td>
+                        <td>Username Placeholder</td>
+                    </tr>
+                    <tr>
+                        <td>Statistic Placeholder</td>
                     </tr>
                 </table>
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="a_title">
-        <h3>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h3>
-    </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/edit"><img src="/static/images/Edit.png" height="16" width="16"></a></td>
+                        <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/delete"><img src="/static/images/Delete.png" height="16" width="16"></a></td>
+                        <th>Views</th>
+                        <th>Submission time</th>
+                    </tr>
+                    <tr>
+                        <td class="center">{{ question["view_number"] }}</td>
+                        <td class="center">{{ question["submission_time"] }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p class="size_comment_title">Comments [<a href="/question/{{ question["id"] }}/new-comment">new</a>]</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {% for comment in question_comments %}
+                    <bdi class="q_comment">{{ comment['message'] }}</bdi>
+                    <table>
+                        <tr>
+                            <td class="center"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
+                            <td class="center"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
+                            <td>{{ comment['submission_time'] }}</td>
+                            <td>"Username placeholder"</td>
+                            <td>"Statistic placeholder"</td>
+                        </tr>
+                    </table>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    <!------------------------------------------------------------------------------------------------------------------
+    -------------------------------------------------  Answers  --------------------------------------------------------
+    ------------------------------------------------------------------------------------------------------------------->
+    <h2>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h2>
     {% for answer in answers %}
-    <div class="answer">
-        <div class="a_vote">
-            <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a></td>
-            <td class="center">{{ answer["vote_number"] }}</td>
-            <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a></td>
-        </div>
-        <div class="a_text">
-            {{ answer["message"] }}
-        </div>
-        <div class="a_field">
-            <table>
+    {% if answer['best_answer'] == True %}<bdi style="color:springgreen">Marked as best answer</bdi>{% endif %}
+    <table class="max_width {% if answer['best_answer'] == True %}good_answer{% endif %}">
+        <tr>
+            <td rowspan="3" width="3%"><table><!-- Answers voting -->
                 <tr>
+                    <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a></td>
+                </tr>
+                <tr>
+                    <td class="center">{{ answer["vote_number"] }}</td>
+                </tr>
+                <tr>
+                    <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a></td>
+                </tr>
+            </table></td>
+            <td colspan="2"><!-- Answers message -->
+                {{ answer["message"] }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class="reset_width">
+                <tr>
+                    <td class="center"><a href="/answer/{{ answer['id'] }}/mark"><img src="/static/images/Checkmark.png" height="12" width="12"></a></td>
                     <td class="center"><a href="/answer/{{ answer['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
                     <td class="center"><a href="/answer/{{ answer['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
                     <td class="center">{{ answer["submission_time"] }}</td>
                 </tr>
-            </table>
-        </div>
-        <div class="a_user">
-            <div class="a_user_box">
-                <table class="a_user_box">
+                </table>
+            </td>
+            <td rowspan="2" class="rightaligned">
+                <table class="user_display__box rightaligned">
                     <tr>
-                        <td rowspan="2">
-                            <img src="{{ answer["image"] }}" height="56" width="56">
-                        </td>
-                        <td>
-                            Name Placeholder
-                        </td>
+                        <td rowspan="2"><img src="/static/avatars/default.png" width="48" height="48"></td>
+                        <td>Username Placeholder</td>
                     </tr>
                     <tr>
-                        <td>
-                            Statistics Placeholder
-                        </td>
+                        <td>Statistic Placeholder</td>
                     </tr>
                 </table>
-            </div>
-        </div>
-        <div class="a_comment">
-            <h3 class="a_comment">Comments [<a href="/answer/{{ answer["id"] }}/new-comment">new</a>]</h3>
-            {% for comments in answer_comments %}
-            {% for comment in comments %}
-                {% if comment['answer_id'] == answer['id'] %}
-                    <bdi class="a_comment">{{ comment['message'] }}</bdi>
-                    <table class="a_comment">
-                        <tr>
-                            <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
-                            <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
-                            <td>{{ comment['submission_time'] }}</td>
-                        </tr>
-                    </table>
-                {% endif %}
-            {% endfor %}
-            {% endfor %}
-        </div>
-    </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Comments [<a href="/answer/{{ answer["id"] }}/new-comment">new</a>]
+                {% for comments in answer_comments %}
+                {% for comment in comments %}
+                    {% if comment['answer_id'] == answer['id'] %}
+                        <table class="reset_width">
+                            <tr>
+                                <td colspan="5">{{ comment['message'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
+                                <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
+                                <td>{{ comment['submission_time'] }}</td>
+                                <td>"Username placeholder"</td>
+                                <td>"Statistic placeholder"</td>
+                            </tr>
+                        </table>
+                    {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
     {% endfor %}
     {% include 'footer.html' %}
 {% endblock %}

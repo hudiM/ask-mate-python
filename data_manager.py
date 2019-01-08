@@ -1,9 +1,10 @@
 import connection
-from random import randint
+import os
 from datetime import datetime
 import bcrypt
-from flask import session, escape
+from werkzeug.utils import secure_filename
 
+from server import app
 
 # ----------------------------------------------------------
 #                   get
@@ -122,18 +123,23 @@ def get_tags_with_question_number(cursor):
     cursor.execute('SELECT DISTINCT name, color, COUNT(question_id) as amount FROM tag LEFT JOIN question_tag ON tag.id = question_tag.tag_id GROUP BY name, color')
     return cursor.fetchall()
 
+@connection.connection_handler
+def get_user_pic(cursor, name):
+    cursor.execute('SELECT image FROM users WHERE name=%s',(name,))
+    return cursor.fetchone()['image']
+
 # ----------------------------------------------------------
 #                   add
 # ----------------------------------------------------------
 
 @connection.connection_handler
 def new_answer(cursor, form, question_id):
-    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message, image) VALUES ('{0}',0,'{1}', %s, %s);".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id),(form['message'],form['image']))
+    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message) VALUES ('{0}',0,'{1}', %s);".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id),(form['message'],))
     return
 
 @connection.connection_handler
 def new_question(cursor, form):
-    cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message, image) VALUES ('{0}','0','0', %s, %s,%s);".format(datetime.now()),(form['title'],form['message'],form['image']))
+    cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message) VALUES ('{0}','0','0', %s, %s);".format(datetime.now()),(form['title'],form['message']))
     return get_latest_question_id()
 
 @connection.connection_handler
@@ -164,14 +170,14 @@ def add_tag(cursor, form):
 
 @connection.connection_handler
 def edit_question(cursor, form, question_id):
-    cursor.execute("UPDATE question SET submission_time='{0}',title=%s,message=%s,image=%s WHERE id={1};".format(
-        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), question_id),(form['title'], form['message'], form['image']))
+    cursor.execute("UPDATE question SET submission_time='{0}',title=%s,message=%s WHERE id={1};".format(
+        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), question_id),(form['title'], form['message']))
     return
 
 @connection.connection_handler
 def edit_answer(cursor, form, answer_id):
-    cursor.execute("UPDATE answer SET submission_time='{0}',message=%s,image=%s WHERE id={1};".format(
-        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),answer_id),(form['message'],form['image']))
+    cursor.execute("UPDATE answer SET submission_time='{0}',message=%s WHERE id={1};".format(
+        str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),answer_id),(form['message'],))
     return get_question_id_by_answer_id(answer_id)
 
 @connection.connection_handler
@@ -211,6 +217,7 @@ def delete_comment(cursor, comment_id):
 def delete_tag(cursor,tag_id):
     cursor.execute("DELETE FROM question_tag WHERE tag_id={0}; DELETE FROM tag WHERE id={0};".format(tag_id))
     return
+
 # ----------------------------------------------------------
 #                   vote
 # ----------------------------------------------------------
@@ -219,15 +226,24 @@ def delete_tag(cursor,tag_id):
 @connection.connection_handler
 def vote(cursor, mode, direction, data_id):
     if direction == 'up':
-        cursor.execute("UPDATE {0} SET vote_number=vote_number+1 WHERE id={1};".format(mode, data_id))
+        cursor.execute("UPDATE {0} SET vote_number=vote_number+1 WHERE id=%s;".format(mode),(data_id,))
     if direction == 'down':
-        cursor.execute("UPDATE {0} SET vote_number=vote_number-1 WHERE id={1};".format(mode, data_id))
+        cursor.execute("UPDATE {0} SET vote_number=vote_number-1 WHERE id=%s;".format(mode),(data_id,))
     if mode == 'answer':
         question_id = get_question_id_by_answer_id(data_id)
         page_view_counter('down', question_id)
         return question_id
     page_view_counter('down', data_id)
     return
+
+# ----------------------------------------------------------
+#                   marks
+# ----------------------------------------------------------
+
+@connection.connection_handler
+def question_mark(cursor, answer_id):
+    cursor.execute('SELECT best_answer FROM answer WHERE id=%s',(answer_id,))
+    cursor.execute('UPDATE answer SET best_answer=%s where id=%s',(not cursor.fetchone()['best_answer'],answer_id))
 
 # ----------------------------------------------------------
 #                   views
@@ -269,8 +285,30 @@ def user_login(cursor, username, password):
     return verify_password(password,database_password['password'])
 
 @connection.connection_handler
-def user_register(cursor, username, password):
+def user_register(cursor, username, password, files):
     password = hash_password(password)
-    cursor.execute('INSERT INTO "users" (name, password,creation_date,reputation) VALUES (%s,%s,%s,%s);',(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),'0'))
-    return
+    filename = upload_image('./static/avatars', files)
+    cursor.execute("INSERT INTO users (name, password,creation_date,reputation,image,color,permissions) VALUES (%s,%s,%s,0,%s,'white','user');",(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),filename))
 
+# ----------------------------------------------------------
+#                   file handling
+# ----------------------------------------------------------
+def allowed_file(filename, allowed_extensions):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+def upload_image(folder, files):
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+    if 'file' not in files:
+        print('error file')
+        return 'default.png'
+    file = files['file']
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if file.filename == '':
+        print('no file')
+        return 'default.png'
+    if file and allowed_file(file.filename, allowed_extensions):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(folder, filename))
+        return filename
