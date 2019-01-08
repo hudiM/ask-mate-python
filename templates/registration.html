@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    <form id="registration" method="post">
+        <p><label id="username">Name:</label>
+        <input type="text" id="username" name="username"></p>
+        <p><label id="password">Password:</label>
+        <input type="password" id="password" name="password"></p>
+        <input type="submit">
+    </form>
+    {% include 'footer.html' %}
+{% endblock %}

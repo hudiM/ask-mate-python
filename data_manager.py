@@ -1,23 +1,9 @@
 import connection
 from random import randint
 from datetime import datetime
+import bcrypt
+from flask import session, escape
 
-#       QUESTIONS
-# id: A unique identifier for the question
-# submission_time: The UNIX timestamp when the question was posted
-# view_number: How many times this question was displayed in the single question view
-# vote_number: The sum of votes this question has received
-# title: The title of the question
-# message: The question text
-# image: The path to the image for this question
-
-#       ANSWERS
-# id: A unique identifier for the answer
-# submission_time: The UNIX timestamp when the answer was posted
-# vote_number: The sum of votes this answer has received
-# question_id: The id of the question this answer belongs to.
-# message: The answer text
-# image: the path to the image for this answer
 
 # ----------------------------------------------------------
 #                   get
@@ -249,3 +235,37 @@ def page_view_counter(cursor, mode, question_id):
     if mode == 'down':
         cursor.execute("UPDATE question SET view_number=view_number-1 WHERE id={0};".format(question_id))
     return
+
+# ----------------------------------------------------------
+#                   password
+# ----------------------------------------------------------
+
+def hash_password(plain_text_password):
+    # By using bcrypt, the salt is saved into the hash itself
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+
+def verify_password(plain_text_password, hashed_password):
+    hashed_bytes_password = hashed_password.encode('utf-8')
+    try:
+        return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
+    except ValueError:
+        return False
+
+# ----------------------------------------------------------
+#                   user
+# ----------------------------------------------------------
+
+@connection.connection_handler
+def user_login(cursor, username, password):
+    cursor.execute("SELECT password FROM users WHERE name = %s;",(username,))
+    database_password = cursor.fetchone()
+    return verify_password(password,database_password['password'])
+
+@connection.connection_handler
+def user_register(cursor, username, password):
+    password = hash_password(password)
+    cursor.execute('INSERT INTO "users" (name, password,creation_date,reputation) VALUES (%s,%s,%s,%s);',(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),'0'))
+    return
+

@@ -10,11 +10,6 @@ body {
     font-family: Helvetica ,Arial, serif;
 }
 
-.nav{
-    background-color: rgba(0,0,0,0.85);
-    border-bottom: lightgrey 3px solid;
-}
-
 .neko{
     vertical-align: bottom;
 }
@@ -221,6 +216,26 @@ h1.answer{
          navigation
    ------------------------ */
 
+.nav{
+    background-color: rgba(0,0,0,0.85);
+    border-bottom: lightgrey 3px solid;
+}
+.nav_links{
+    margin: 0 0 0 20%;
+    height: 48px;
+    width: 40%;
+    display: inline-block;
+}
+.nav_user{
+    position: fixed;
+    top: 0;
+    width: 20%;
+    text-align: right;
+    margin: 0 20% 0 0;
+    height: 48px;
+    display: inline-block;
+}
+
 a{
     color: lightskyblue;
     background: transparent;
@@ -232,7 +247,7 @@ a{
 
 #links ul{
     list-style-type: none;
-    margin: 0 20% 0;
+    margin: 2px 0 0 0;
     padding: 0;
     overflow: hidden;
 }

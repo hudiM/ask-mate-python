@@ -1,19 +1,38 @@
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, session, make_response, escape
 import data_manager
 
 app = Flask(__name__)
-
+# Set the secret key to some random bytes. Keep this really secret!
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 # ------------------------
 #           main
 # ------------------------
 
+# def login_data(func):
+#     def func_wrapper(logindata):
+#         if 'username' in session:
+#             logindata = {'okey': True, 'username': escape(session['username'])}
+#         else:
+#             logindata = {'okey': False}
+#     return func_wrapper(logindata)
+
+# ------------------------
+#           main
+# ------------------------
+
+
 @app.route('/')
+# @login_data
 def route_index():
+    if 'username' in session:
+        logindata = {'okey': True, 'username': escape(session['username'])}
+    else:
+        logindata = {'okey': False}
     sorting = {'direction': request.args.get('direction'),'sort': request.args.get('sort')}
     questions = data_manager.get_five_questions(sorting)
     tags = data_manager.get_tags_list()
-    return render_template('list.html', questions=questions, tags=tags, index=True, sorting=sorting)
+    return render_template('list.html', questions=questions, tags=tags, index=True, sorting=sorting, logindata = logindata)
 
 @app.route('/list')
 def route_list():
@@ -40,6 +59,35 @@ def route_question(question_id):
     for answer in answers:
         answer_comments.append(data_manager.get_comments('answer', answer['id']))
     return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags)
+
+# ----------------------------------------------------------
+#                   user
+# ----------------------------------------------------------
+
+@app.route('/register', methods=('GET','POST'))
+def route_user_register():
+    if request.method == 'POST':
+        data_manager.user_register(request.form['username'],request.form['password'])
+        return redirect('/')
+    return render_template('registration.html')
+
+@app.route('/login', methods=('GET','POST'))
+def route_user_login():
+    if 'username' in session:
+        logindata = {'okey': True, 'username': escape(session['username'])}
+    else:
+        logindata = {'okey': False}
+    if request.method == 'POST':
+        # response = make_response(redirect('/'))
+        if data_manager.user_login(request.form['username'],request.form['password']):
+            session['username'] = request.form['username']
+            return redirect('/')
+    return render_template('registration.html', logindata=logindata)
+
+@app.route('/logout')
+def route_user_logout():
+    session.pop('username', None)
+    return redirect('/')
 
 # ----------------------------------------------------------
 #                   tags
