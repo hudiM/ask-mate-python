@@ -18,7 +18,6 @@ def check_login():
 
 
 @app.route('/')
-# @login_data
 def route_index():
     login_data = check_login()
     sorting = {'direction': request.args.get('direction'),'sort': request.args.get('sort')}
@@ -71,7 +70,6 @@ def route_user_register():
 def route_user_login():
     login_data = check_login()
     if request.method == 'POST':
-        # response = make_response(redirect('/'))
         if data_manager.user_login(request.form['username'],request.form['password']):
             session['username'] = request.form['username']
             return redirect('/')
@@ -85,6 +83,11 @@ def route_user_logout():
 # ----------------------------------------------------------
 #                   tags
 # ----------------------------------------------------------
+@app.route('/tags')
+def route_get_tags():
+    login_data = check_login()
+    tags = data_manager.get_tags_with_question_number()
+    return render_template('tags.html', tags=tags, login_data=login_data)
 
 @app.route('/question/<question_id>/edit-tag', methods=['GET','POST'])
 def route_edit_tags(question_id):

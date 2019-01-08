@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    {% for tag in tags %}
+        <p>
+            <bdi class="tag_id" style="color: {{ tag['color'] }} !important; border-color: {{ tag['color'] }} !important;">{{ tag['name'] }}</bdi> x {{ tag['amount'] }}
+        </p>
+    {% endfor %}
+
+    {% include 'footer.html' %}
+{% endblock %}
