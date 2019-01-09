@@ -102,7 +102,7 @@
     ------------------------------------------------------------------------------------------------------------------->
     <h2>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h2>
     {% for answer in answers %}
-    {% if answer['best_answer'] == True %}<bdi style="color:springgreen">Marked as best answer</bdi>{% endif %}
+    {% if answer['best_answer'] == True %}<bdi style="color:springgreen">Marked as good answer</bdi>{% endif %}
     <table class="max_width {% if answer['best_answer'] == True %}good_answer{% endif %}">
         <tr>
             <td rowspan="3" width="3%"><table><!-- Answers voting -->
