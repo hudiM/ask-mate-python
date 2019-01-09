@@ -185,13 +185,13 @@ def new_question(cursor, form, userid):
     return get_latest_question_id()
 
 @connection.connection_handler
-def new_comment(cursor, mode, form, data_id):
+def new_comment(cursor, mode, form, data_id, user_id):
     if mode == 'question':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
-                       (data_id,None,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, user_id) VALUES (%s,%s,%s,%s,%s,%s);",
+                       (data_id,None,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None, user_id))
     if mode == 'answer':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
-                       (None,data_id,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, user_id) VALUES (%s,%s,%s,%s,%s,%s);",
+                       (None,data_id,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None, user_id))
     return
 
 @connection.connection_handler

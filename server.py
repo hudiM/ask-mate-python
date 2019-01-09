@@ -205,7 +205,7 @@ def route_answer_delete(answer_id):
 def route_new_comment_question(question_id):
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.new_comment('question', request.form, question_id)
+        data_manager.new_comment('question', request.form, question_id, login_data['id'])
         return redirect('/question/'+str(question_id))
     return render_template('new_comment.html', comment=None, login_data=login_data)
 
@@ -213,7 +213,7 @@ def route_new_comment_question(question_id):
 def route_new_comment_answer(answer_id):
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.new_comment('answer', request.form, answer_id)
+        data_manager.new_comment('answer', request.form, answer_id, login_data['id'])
         return redirect('/question/'+str(data_manager.get_question_id_by_answer_id(answer_id)))
     return render_template('new_comment.html', comment=None, login_data=login_data)
 
