@@ -122,7 +122,7 @@ def get_tags_list(cursor):
 
 @connection.connection_handler
 def get_tags_checked(cursor, question_id): # something
-    cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', question_id)
+    cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', (question_id,))
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -134,7 +134,7 @@ def get_tags_with_question_number(cursor):
 
 @connection.connection_handler
 def get_all_user(cursor):
-    cursor.execute('SELECT name, creation_date, reputation, image, color FROM users')
+    cursor.execute('SELECT id, name, creation_date, reputation, image, color FROM users')
     return cursor.fetchall()
 
 @connection.connection_handler
