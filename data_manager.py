@@ -4,8 +4,6 @@ from datetime import datetime
 import bcrypt
 from werkzeug.utils import secure_filename
 
-from server import app
-
 # ----------------------------------------------------------
 #                   get
 # ----------------------------------------------------------
@@ -56,7 +54,7 @@ def get_five_questions(cursor, sorting):
 
 @connection.connection_handler
 def get_question_by_id(cursor, question_id):
-    cursor.execute("SELECT * FROM question WHERE ID='{0}';".format(question_id))
+    cursor.execute("SELECT *, users.name, users.image, users.reputation FROM question LEFT JOIN users on question.user_id = users.id WHERE question.id='{0}';".format(question_id))
     return cursor.fetchall()[0]
 
 # ---------------   answers   ------------------------------
@@ -67,7 +65,7 @@ def get_answer(cursor, answer_id):
 
 @connection.connection_handler
 def get_answers_by_question_id(cursor, question_id):
-    cursor.execute("SELECT * FROM answer WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
+    cursor.execute("SELECT answer.*, users.name, users.image, users.reputation FROM answer LEFT JOIN users on answer.user_id = users.id WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
     return cursor.fetchall()
 
 # ---------------   comments   -----------------------------
@@ -75,9 +73,9 @@ def get_answers_by_question_id(cursor, question_id):
 @connection.connection_handler
 def get_comments(cursor, mode, data_id):
     if mode == 'question':
-        cursor.execute("SELECT * FROM comment WHERE question_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation FROM comment LEFT JOIN users on comment.user_id = users.id WHERE question_id={0};".format(data_id))
     if mode == 'answer':
-        cursor.execute("SELECT * FROM comment WHERE answer_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation FROM comment LEFT JOIN users on comment.user_id = users.id WHERE answer_id={0};".format(data_id))
     return cursor.fetchall()
 
 @connection.connection_handler
