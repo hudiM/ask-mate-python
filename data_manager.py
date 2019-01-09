@@ -54,7 +54,7 @@ def get_five_questions(cursor, sorting):
 
 @connection.connection_handler
 def get_question_by_id(cursor, question_id):
-    cursor.execute("SELECT *, users.name, users.image, users.reputation FROM question LEFT JOIN users on question.user_id = users.id WHERE question.id='{0}';".format(question_id))
+    cursor.execute("SELECT question.*, users.name, users.image, users.reputation FROM question LEFT JOIN users on question.user_id = users.id WHERE question.id='{0}';".format(question_id))
     return cursor.fetchall()[0]
 
 # ---------------   answers   ------------------------------
@@ -174,8 +174,8 @@ def get_user_activity(cursor, user_id):
 # ----------------------------------------------------------
 
 @connection.connection_handler
-def new_answer(cursor, form, question_id):
-    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message) VALUES ('{0}',0,'{1}', %s);".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id),(form['message'],))
+def new_answer(cursor, form, question_id, user_id):
+    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message, user_id, best_answer) VALUES ('{0}',0,'{1}', %s, %s, %s);".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id),(form['message'],user_id, False))
     return
 
 @connection.connection_handler

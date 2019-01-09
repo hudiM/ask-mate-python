@@ -179,7 +179,7 @@ def route_question_mark(answer_id):
 def route_new_answer(question_id):
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.new_answer(request.form, question_id)
+        data_manager.new_answer(request.form, question_id, login_data['id'])
         return redirect('/question/'+str(question_id))
     return render_template('new_answer.html', question_id = question_id, answer=None, login_data=login_data)
 
