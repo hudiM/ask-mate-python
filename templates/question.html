@@ -48,13 +48,13 @@
                 <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
             </p></td>
             <td rowspan="2">
-                <table class="user_display_box">
+                <table class="user_display_box rightaligned">
                     <tr>
-                        <td rowspan="2"><img src="/static/avatars/default.png" width="48" height="48"></td>
-                        <td>Username Placeholder</td>
+                        <td rowspan="2"><img src="/static/avatars/{{ question['image'] }}" width="48" height="48"></td>
+                        <td>{{ question['name'] }}</td>
                     </tr>
                     <tr>
-                        <td>Statistic Placeholder</td>
+                        <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ question['reputation'] }}</td>
                     </tr>
                 </table>
             </td>
@@ -89,8 +89,8 @@
                             <td class="center"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
                             <td class="center"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
                             <td>{{ comment['submission_time'] }}</td>
-                            <td>"Username placeholder"</td>
-                            <td>"Statistic placeholder"</td>
+                            <td>{{ comment['name'] }}</td>
+                            <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ comment['reputation'] }}</td>
                         </tr>
                     </table>
                 {% endfor %}
@@ -134,11 +134,11 @@
             <td rowspan="2" class="rightaligned">
                 <table class="{% if answer['best_answer'] == True %}user_display_box_best{% else %}user_display_box{% endif %} rightaligned">
                     <tr>
-                        <td rowspan="2"><img src="/static/avatars/default.png" width="48" height="48"></td>
-                        <td>Username Placeholder</td>
+                        <td rowspan="2"><img src="/static/avatars/{{ answer['image'] }}" width="48" height="48"></td>
+                        <td>{{ answer['name'] }}</td>
                     </tr>
                     <tr>
-                        <td>Statistic Placeholder</td>
+                        <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ answer['reputation'] }}</td>
                     </tr>
                 </table>
             </td>
@@ -157,8 +157,8 @@
                                 <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
                                 <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
                                 <td>{{ comment['submission_time'] }}</td>
-                                <td>"Username placeholder"</td>
-                                <td>"Statistic placeholder"</td>
+                                <td>{{ comment['name'] }}</td>
+                                <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ comment['reputation'] }}</td>
                             </tr>
                         </table>
                     {% endif %}
