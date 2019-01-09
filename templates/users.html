@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+{% block content %}
+    {% for user in users %}
+        <table>
+        <tr>
+            <td rowspan="2">
+                <img src="/static/avatars/{{ user['image'] }}" height="36" width="36">
+            </td>
+            <td>
+                <bdi style="color: {{ user['color'] }};">{{ user['name'] }}</bdi>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="/static/images/Calendar.png" height="16" width="16"> {{ user['creation_date'] }}
+            </td>
+            <td>
+                <img src="/static/images/Reputation%20Badge.png" height="16" width="16"> {{ user['reputation'] }}
+            </td>
+        </tr>
+        </table>
+    {% endfor %}
+    {% include 'footer.html' %}
+{% endblock %}
