@@ -12,7 +12,7 @@
         <ul>
             {% if login_data['okey'] == True %}
             <li class="neko"><img src="/static/avatars/{{ login_data['image'] }}" height="40" width="40"></li>
-            <li>{{ login_data['username'] }}</li>
+            <li><a href="/user/{{ login_data['id'] }}">{{ login_data['username'] }}</a></li>
             <li><a href="{{ url_for('route_user_list') }}">Users</a></li>
             <li><a href="{{ url_for('route_user_logout') }}">Logout</a></li>
             {% else %}
