@@ -5,12 +5,24 @@
 {% endblock %}
 
 {% block content %}
-    <form id="registration" method="post">
-        <p><label id="username">Name:</label>
+    {% if mode == 'register' %}
+    <form method="post" enctype=multipart/form-data>
+        <p><label for="username">Name:</label>
         <input type="text" id="username" name="username"></p>
-        <p><label id="password">Password:</label>
+        <p><label for="password">Password:</label>
+        <input type="password" id="password" name="password"></p>
+        <p><label for="file">Image:</label>
+        <input type="file" id="file" name="file"></p>
+        <input type="submit">
+    </form>
+    {% else %}
+    <form method="post">
+        <p><label for="username">Name:</label>
+        <input type="text" id="username" name="username"></p>
+        <p><label for="password">Password:</label>
         <input type="password" id="password" name="password"></p>
         <input type="submit">
     </form>
+    {% endif %}
     {% include 'footer.html' %}
 {% endblock %}

@@ -4,17 +4,20 @@
             <li class="neko"><img src="/static/images/neko.gif" height="40" width="40"></li>
             <li><a href="{{ url_for('route_index') }}">Index</a></li>
             <li><a href="{{ url_for('route_list') }}">Questions</a></li>
+            <li><a href="{{ url_for('route_get_tags') }}">Tags</a></li>
             <li><form method="get" action="/search-result"><input type="text" placeholder="Search.." class="nav" name="search"><input type="submit" name="s"></form></li>
         </ul>
     </div>
     <div class="nav_user">
         <ul>
             {% if login_data['okey'] == True %}
-                <li>{{ login_data['username'] }}</li>
-                <li><a href="{{ url_for('route_user_logout') }}">Logout</a></li>
+            <li class="neko"><img src="/static/avatars/{{ login_data['image'] }}" height="40" width="40"></li>
+            <li>{{ login_data['username'] }}</li>
+            <li><a href="{{ url_for('route_user_list') }}">Users</a></li>
+            <li><a href="{{ url_for('route_user_logout') }}">Logout</a></li>
             {% else %}
-                <li><a href="{{ url_for('route_user_login') }}">Login</a></li>
-                <li><a href="{{ url_for('route_user_register') }}">Register</a></li>
+            <li><a href="{{ url_for('route_user_login') }}">Login</a></li>
+            <li><a href="{{ url_for('route_user_register') }}">Register</a></li>
             {% endif %}
         </ul>
     </div>
