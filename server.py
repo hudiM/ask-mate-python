@@ -1,17 +1,18 @@
-from flask import Flask, render_template, redirect, request, url_for, session, make_response, escape
+from flask import Flask, render_template, redirect, request, url_for, session, escape
 import data_manager
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['UPLOAD_FOLDER'] = '/static/tmp'
 # Set the secret key to some random bytes. Keep this really secret!
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def check_login():
     if 'username' in session:
-        login_data = {'okey': True, 'username': escape(session['username'])}
+        login_data = {'okey': True, 'username': escape(session['username']), 'image': data_manager.get_user_pic(escape(session['username']))}
     else:
         login_data = {'okey': False}
     return login_data
-
 # ------------------------
 #           main
 # ------------------------
@@ -58,13 +59,21 @@ def route_question(question_id):
 #                   user
 # ----------------------------------------------------------
 
+@app.route('/users')
+def route_user_list():
+    login_data = check_login()
+    users = data_manager.get_all_user()
+    return render_template('users.html', login_data=login_data, users=users)
+
+
 @app.route('/register', methods=('GET','POST'))
 def route_user_register():
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.user_register(request.form['username'],request.form['password'])
+        data_manager.user_register(request.form['username'],request.form['password'],request.files)
+        session['username'] = request.form['username']
         return redirect('/')
-    return render_template('registration.html', login_data=login_data)
+    return render_template('registration.html', login_data=login_data, mode='register')
 
 @app.route('/login', methods=('GET','POST'))
 def route_user_login():
@@ -73,7 +82,7 @@ def route_user_login():
         if data_manager.user_login(request.form['username'],request.form['password']):
             session['username'] = request.form['username']
             return redirect('/')
-    return render_template('registration.html', login_data=login_data)
+    return render_template('registration.html', login_data=login_data, mode='login')
 
 @app.route('/logout')
 def route_user_logout():
@@ -144,6 +153,12 @@ def route_question_edit(question_id):
 def route_question_delete(question_id):
     data_manager.delete_question(question_id)
     return redirect('/')
+
+@app.route('/answer/<answer_id>/mark')
+def route_question_mark(answer_id):
+    data_manager.question_mark(answer_id)
+    question_id = data_manager.get_question_id_by_answer_id(answer_id)
+    return redirect('/question/'+str(question_id))
 
 # ----------------------------------------------------------
 #                   answer

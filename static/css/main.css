@@ -8,6 +8,9 @@ body {
     color: whitesmoke;
     margin: 0;
     font-family: Helvetica ,Arial, serif;
+    min-width:1280px;        /* Suppose you want minimum width of 1000px */
+    width: auto !important;  /* Firefox will set width as auto */
+    width:1280px;            /* As IE6 ignores !important it will set width as 1000px; */
 }
 
 .neko{
@@ -31,168 +34,63 @@ footer{
 .center{
     text-align: center;
 }
-
+.right{
+    text-align: right;
+}
+.rightaligned{
+    margin-right: 0;
+    margin-left: auto;
+}
+.max_width{
+    width: 100%;
+}
+.reset_width{
+    width: auto;
+}
 /* ------------------------
             question
    ------------------------ */
-.question_sort_table{
-    width: 100%;
+.size_question_message{
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 6px;
 }
-.question_sort_table input{
-    width: auto;
-    margin: 0;
-    border-radius: 5px;
-    padding: 7px;
-}
-.question_sort_table_fix{
-    width: 25%;
-    float: right;
-    margin: auto;;
-}
-
-.q_vote{
-    grid-column-start: 1;
-    grid-column-end: auto;
-    grid-row-end: span 3;
-    color: lightskyblue;
-    font-size: 30px;
-    text-align: center;
-    vertical-align: center;
-}
-.q_title{
-    grid-column-start: span 2;
-    grid-column-end: auto;
-}
-.q_text{
-    grid-column-start: 2;
-    grid-column-end: auto;
-    font-size: 20px;
-    margin-bottom: 12px;
-}
-.q_tags{
-    grid-column-start: 2;
-    grid-column-end: auto;
+.size_tag{
     font-size: 12px;
-    margin: 3px;
+    margin: 0;
 }
-.q_field{
-    grid-column-start: 2;
-    grid-column-end: auto;
-    font-size: 14px;
-    margin: 3px;
-}
-.q_comment{
-    grid-column-start: 2;
-    grid-column-end: auto;
-    font-size: 18px;
-}
-.q_comment table{
-    margin-left: 12px;
-}
-.q_comment h3{
-    margin: 3px 0 8px;
-    font-size: 20px;
-}
-bdi.q_comment{
-    margin-left: 12px;
-}
-h1.question{
-    margin: 0 0 5px;
+.size_comment_title{
+    font-weight: bold;
+    font-size: 24px;
+    margin: 0;
 }
 
-.question {
-    display: grid;
-    grid-template-columns: 60px auto;
+.good_answer{
+    border: springgreen 2px solid;
+    border-radius: 6px;
 }
 
-/* ------------------------
-            answer
-   ------------------------ */
+.question_answer_separator{
+    border-bottom: 2px lightskyblue solid;
+}
 
-.a_vote{
-    grid-column-start: 1;
-    grid-column-end: auto;
-    grid-row-start: auto;
-    grid-row-end: span 3;
-    color: lightskyblue;
-    font-size: 30px;
-    text-align: center;
-    vertical-align: center;
+.user_display_box_best{
+    padding: 3px;
+    font-size: 16px;
+    width: 150px;
+    border-bottom: springgreen 2px solid;
+    border-radius: 5px;
+    background-color: rgba(120,120,120,0.2);
+    display: block;
 }
-.a_vote_fix{
-    margin-top: 10px;
-}
-.a_title{
-    grid-column-start: span 3;
-    grid-column-end: auto;
-    margin-top: 40px;
-}
-.a_text{
-    grid-column-start: 2;
-    grid-column-end: span 2;
-    font-size: 20px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-}
-.a_name{
-    grid-column-start: 3;
-    grid-column-end: auto;
-}
-.a_user{
-    grid-column-start: 3;
-    grid-column-end: auto;
-    grid-row-start: span 2;
-    align-content: end;
-    margin-left: 15px;
-    margin-top: 15px;
-}
-.a_user_box table{
+.user_display_box{
     padding: 3px;
     font-size: 16px;
     width: 150px;
     border-bottom: lightskyblue 2px solid;
     border-radius: 5px;
     background-color: rgba(120,120,120,0.2);
-}
-.a_user_box{
     display: block;
-}
-.a_field{
-    grid-column-start: 2;
-    grid-column-end: auto;
-    font-size: 14px;
-    margin: 3px;
-}
-.a_comment{
-    grid-column-start: 2;
-    grid-column-end: auto;
-    font-size: 16px;
-    margin-left: 6px;
-}
-.a_comment table{
-    margin: 6px 6px 6px;
-    font-size: 14px;
-}
-bdi.a_comment{
-    margin-left: 6px;
-}
-h3.a_comment{
-    margin: 4px 0 8px;
-    font-size: 18px;
-}
-
-h1.answer{
-    margin: 0 0 5px;
-}
-.answer {
-    display: grid;
-    margin-bottom: 5px;
-    padding: 5px;
-    border-bottom: lightskyblue 1px solid;
-    grid-template-columns: 40px 70% auto;
-}
-.answer:last-of-type{
-    border: 0;
 }
 /* ------------------------
             tags
@@ -221,19 +119,22 @@ h1.answer{
     border-bottom: lightgrey 3px solid;
 }
 .nav_links{
+    vertical-align: top;
     margin: 0 0 0 20%;
     height: 48px;
     width: 40%;
     display: inline-block;
 }
 .nav_user{
-    position: fixed;
-    top: 0;
+    vertical-align: top;
     width: 20%;
     text-align: right;
-    margin: 0 20% 0 0;
+    margin: 0 19% 0 0;
     height: 48px;
     display: inline-block;
+}
+.nav_test{
+    text-align: center;
 }
 
 a{
@@ -250,6 +151,7 @@ a{
     margin: 2px 0 0 0;
     padding: 0;
     overflow: hidden;
+    height: 48px;
 }
 
 #links li a:link, li a:visited{
