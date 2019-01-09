@@ -11,11 +11,12 @@
     <div class="nav_user">
         <ul>
             {% if login_data['okey'] == True %}
-                <li>{{ login_data['username'] }}</li>
-                <li><a href="{{ url_for('route_user_logout') }}">Logout</a></li>
+            <li class="neko"><img src="/static/avatars/{{ login_data['image'] }}" height="40" width="40"></li>
+            <li>{{ login_data['username'] }}</li>
+            <li><a href="{{ url_for('route_user_logout') }}">Logout</a></li>
             {% else %}
-                <li><a href="{{ url_for('route_user_login') }}">Login</a></li>
-                <li><a href="{{ url_for('route_user_register') }}">Register</a></li>
+            <li><a href="{{ url_for('route_user_login') }}">Login</a></li>
+            <li><a href="{{ url_for('route_user_register') }}">Register</a></li>
             {% endif %}
         </ul>
     </div>
