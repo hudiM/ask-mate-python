@@ -308,7 +308,7 @@ def user_register(cursor, username, password, files):
 
 
 @connection.connection_handler
-def user_id_from_username(cursor, name):
+def get_user_id_by_name(cursor, name):
     cursor.execute('SELECT id FROM users WHERE name = %s', (name,))
     return cursor.fetchone()['id']
 
