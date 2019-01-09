@@ -9,7 +9,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def check_login():
     if 'username' in session:
-        login_data = {'okey': True, 'username': escape(session['username']), 'image': data_manager.get_user_pic(escape(session['username']))}
+        login_data = {'okey': True, 'username': escape(session['username']), 'image': data_manager.get_user_pic(escape(session['username'])), 'id':data_manager.get_user_id_by_name(escape(session['username']))}
     else:
         login_data = {'okey': False}
     return login_data
@@ -59,12 +59,22 @@ def route_question(question_id):
 #                   user
 # ----------------------------------------------------------
 
+@app.route('/user/<user_id>')
+def route_user_profile(user_id):
+    login_data = check_login()
+    question, answers, comments = data_manager.get_user_activity(user_id)
+    user = data_manager.get_user_details(user_id)
+    for comment in comments:
+        if comment['question_id'] is None:
+            print('ID:',data_manager.get_question_id_by_answer_id(comment['answer_id']))
+            comment['question_id'] = data_manager.get_question_id_by_answer_id(comment['answer_id'])
+    return render_template('user.html', user=user, question=question, answers=answers, comments=comments, login_data=login_data)
+
 @app.route('/users')
 def route_user_list():
     login_data = check_login()
     users = data_manager.get_all_user()
     return render_template('users.html', login_data=login_data, users=users)
-
 
 @app.route('/register', methods=('GET','POST'))
 def route_user_register():

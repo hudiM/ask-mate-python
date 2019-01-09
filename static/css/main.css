@@ -9,20 +9,40 @@ body {
     margin: 0;
     font-family: Helvetica ,Arial, serif;
     min-width:1280px;        /* Suppose you want minimum width of 1000px */
-    width: auto !important;  /* Firefox will set width as auto */
-    width:1280px;            /* As IE6 ignores !important it will set width as 1000px; */
 }
 
 .neko{
     vertical-align: bottom;
 }
 
-.content-wrapper {
+.content-wrapper{
+    display: block;
+    padding: 2% 5% 2% 5%;
     margin: 5px 20% 0 20%;
+    border: 2px darkgrey solid;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.85);
+}
+
+.content-wrapper-left{
+    display: inline-block;
+    width: 150px;
+    overflow: hidden;
+    padding: 2% 5% 2% 5%;
+    margin: 5px 0 0 20%;
+    border: 2px darkgrey solid;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.85);
+}
+.content-wrapper-right{
+    display: inline-block;
+    width: auto;
+    margin: 5px 20% 0 0;
     padding: 2% 5% 2% 5%;
     border: 2px darkgrey solid;
     border-radius: 5px;
     background-color: rgba(0,0,0,0.85);
+    vertical-align:top;
 }
 
 footer{

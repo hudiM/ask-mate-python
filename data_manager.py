@@ -142,6 +142,33 @@ def get_user_pic(cursor, name):
     cursor.execute('SELECT image FROM users WHERE name=%s',(name,))
     return cursor.fetchone()['image']
 
+@connection.connection_handler
+def get_user_id_by_name(cursor, name):
+    cursor.execute('SELECT id FROM users WHERE name = %s', (name,))
+    return cursor.fetchone()['id']
+
+@connection.connection_handler
+def get_user_details(cursor, user_id):
+    cursor.execute('SELECT name, image, reputation, permissions, color FROM users WHERE id=%s',(user_id,))
+    user = cursor.fetchall()
+    return user[0]
+
+@connection.connection_handler
+def get_user_activity(cursor, user_id):
+    cursor.execute(
+        'SELECT question.id, title, message FROM question LEFT JOIN users ON question.user_id = users.id WHERE users.id = %s',
+        (user_id,))
+    questions = cursor.fetchall()
+    cursor.execute(
+        'SELECT question_id, message FROM answer LEFT JOIN users ON answer.user_id = users.id WHERE users.id = %s',
+        (user_id,))
+    answers = cursor.fetchall()
+    cursor.execute(
+        'SELECT question_id, answer_id, message FROM comment LEFT JOIN users ON comment.user_id = users.id WHERE users.id = %s',
+        (user_id,))
+    comments = cursor.fetchall()
+    return questions[0], answers, comments
+
 # ----------------------------------------------------------
 #                   add
 # ----------------------------------------------------------
