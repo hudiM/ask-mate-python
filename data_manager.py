@@ -154,7 +154,7 @@ def new_answer(cursor, form, question_id):
 @connection.connection_handler
 def new_question(cursor, form, userid):
     cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message, user_id) "
-                   "VALUES ('{0}','0','0', %s, %s, %s);".format(datetime.now()),(form['title'],form['message'], userid['id']))
+                   "VALUES ('{0}','0','0', %s, %s, %s);".format(datetime.now()),(form['title'],form['message'], userid))
     return get_latest_question_id()
 
 @connection.connection_handler
@@ -306,11 +306,11 @@ def user_register(cursor, username, password, files):
     cursor.execute("INSERT INTO users (name, password,creation_date,reputation,image,color,permissions) "
                    "VALUES (%s,%s,%s,0,%s,'white','user');",(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),filename))
 
+
 @connection.connection_handler
-def user_id_from_username(cursor, login_data):
-    cursor.execute("SELECT id FROM users WHERE name = %s;", (login_data['username'],))
-    userid = cursor.fetchone()
-    return userid
+def user_id_from_username(cursor, name):
+    cursor.execute('SELECT id FROM users WHERE name = %s', (name,))
+    return cursor.fetchone()['id']
 
 # ----------------------------------------------------------
 #                   file handling

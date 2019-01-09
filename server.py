@@ -135,8 +135,8 @@ def route_delete_tag(tag_id):
 @app.route('/add-question', methods=['GET', 'POST'])
 def route_add_question():
     login_data = check_login()
-    userid = data_manager.user_id_from_username(login_data)
     if request.method == 'POST':
+        userid = data_manager.user_id_from_username(login_data['username'])
         question_id = data_manager.new_question(request.form, userid)
         return redirect('/question/' + str(question_id))
     return render_template('new_question.html', question = None, login_data=login_data)
