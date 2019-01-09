@@ -53,9 +53,6 @@ def route_question(question_id):
     answer_comments = []
     for answer in answers:
         answer_comments.append(data_manager.get_comments('answer', answer['id']))
-    print(question)
-    print(answers)
-    print(answer_comments)
     return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags, login_data=login_data)
 
 # ----------------------------------------------------------
