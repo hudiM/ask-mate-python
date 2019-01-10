@@ -169,6 +169,18 @@ def get_user_activity(cursor, user_id):
     comments = cursor.fetchall()
     return questions[0], answers, comments
 
+
+@connection.connection_handler
+def get_user_id_by_question_id(cursor, question_id):
+    cursor.execute("SELECT user_id FROM question WHERE id={0}". format(question_id))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def get_user_id_by_answer_id(cursor, answer_id):
+    cursor.execute("SELECT user_id FROM answer WHERE id={0}". format(answer_id))
+    return cursor.fetchone()
+
 # ----------------------------------------------------------
 #                   add
 # ----------------------------------------------------------
@@ -278,14 +290,32 @@ def vote(cursor, mode, direction, data_id):
     page_view_counter('down', data_id)
     return
 
+
+@connection.connection_handler
+def question_reputation(cursor, user_id, direction):
+    if direction == 'up':
+        cursor.execute("UPDATE users SET reputation = reputation + 5 WHERE id={0};".format(user_id,))
+    if direction == 'down':
+        cursor.execute("UPDATE users SET reputation = reputation - 2 WHERE id={0};".format(user_id,))
+    return
+
+@connection.connection_handler
+def answer_reputation(cursor, user_id, direction):
+    if direction == 'up':
+        cursor.execute("UPDATE users SET reputation = reputation + 10 WHERE id={0};".format(user_id,))
+    if direction == 'down':
+        cursor.execute("UPDATE users SET reputation = reputation - 2 WHERE id={0};".format(user_id,))
+    return
+
 # ----------------------------------------------------------
 #                   marks
 # ----------------------------------------------------------
 
 @connection.connection_handler
-def question_mark(cursor, answer_id):
+def question_mark(cursor, answer_id, user_id):
     cursor.execute('SELECT best_answer FROM answer WHERE id=%s',(answer_id,))
     cursor.execute('UPDATE answer SET best_answer=%s where id=%s',(not cursor.fetchone()['best_answer'],answer_id))
+    cursor.execute('UPDATE users SET reputation = reputation + 15 WHERE id= {0};'.format(user_id,))
 
 # ----------------------------------------------------------
 #                   views

@@ -167,7 +167,8 @@ def route_question_delete(question_id):
 
 @app.route('/answer/<answer_id>/mark')
 def route_question_mark(answer_id):
-    data_manager.question_mark(answer_id)
+    user_id = data_manager.get_user_id_by_answer_id(answer_id)
+    data_manager.question_mark(answer_id, user_id['user_id'])
     question_id = data_manager.get_question_id_by_answer_id(answer_id)
     return redirect('/question/'+str(question_id))
 
@@ -237,22 +238,31 @@ def route_comment_delete(comment_id):
 
 @app.route('/answer/<answer_id>/vote-up')
 def route_vote_up(answer_id):
+    user_id = data_manager.get_user_id_by_answer_id(answer_id)
     question_id = data_manager.vote('answer','up',answer_id)
+    data_manager.answer_reputation(user_id['user_id'],'up')
     return redirect(url_for('route_question', question_id=question_id))
 
 @app.route('/answer/<answer_id>/vote-down')
 def route_vote_down(answer_id):
+    user_id = data_manager.get_user_id_by_answer_id(answer_id)
     question_id = data_manager.vote('answer','down',answer_id)
+    data_manager.answer_reputation(user_id['user_id'],'down')
     return redirect(url_for('route_question', question_id=question_id))
 
 @app.route('/question/<question_id>/vote-up')
 def route_vote_up_question(question_id):
-    data_manager.vote('question','up',question_id)
-    return redirect('/question/'+question_id)
+    user_id = data_manager.get_user_id_by_question_id(question_id)
+    data_manager.vote('question', 'up', question_id)
+    data_manager.question_reputation(user_id['user_id'], 'up')
+    return redirect('/question/' + question_id)
+
 
 @app.route('/question/<question_id>/vote-down')
 def route_vote_down_question(question_id):
+    user_id = data_manager.get_user_id_by_question_id(question_id)
     data_manager.vote('question','down',question_id)
+    data_manager.question_reputation(user_id['user_id'], 'down')
     return redirect('/question/'+question_id)
 
 # ----------------------------------------------------------
