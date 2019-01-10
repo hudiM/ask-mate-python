@@ -19,9 +19,9 @@
         {% endif %}
     <h3>
         <table class="question_sort_table">
-            <td>Questions</td>
+            <td class="question_sort_table_fix">Questions</td>
             <td class="right">
-                <table class="question_sort_table_fix right">
+                <table class="right">
                     <tr>
                         <td>
                             <form method="get" id="sorting">
@@ -59,8 +59,8 @@
     <table class="lists">
         {% for question in questions %}
             <tr>
-                <td class="center" width="5%" class="lists_views">{{ question['view_number'] }}</td>
-                <td class="center" width="5%" class="lists_votes">{{ question['vote_number'] }}</td>
+                <td class="center" width="7%" class="lists_views">{{ question['view_number'] }}</td>
+                <td class="center" width="7%" class="lists_votes">{{ question['vote_number'] }}</td>
                 <td colspan="2" class="lists_text"><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
             </tr>
             <tr>
@@ -76,6 +76,6 @@
         {% endfor %}
     </table>
     {% endif %}
-    {% if index %}<a href="/list">All questions</a>{% endif %}
+    {% if index %}<a href="/list">Show more</a>{% endif %}
     {% include 'footer.html' %}
 {% endblock %}

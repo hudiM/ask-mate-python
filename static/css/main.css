@@ -71,12 +71,39 @@ footer{
     margin-right: 0;
     margin-left: auto;
 }
+.reset_align{
+    margin-right: auto;
+    text-align: initial;
+}
 .max_width{
     width: 100%;
+    table-layout: fixed;
 }
 .reset_width{
+    table-layout: fixed;
     width: auto;
 }
+.table_layout_fix{
+    table-layout: fixed;
+}
+table td {
+    word-break: break-word;
+}
+.table_text{
+    white-space: pre-line;
+}
+/* ------------------------
+            lists
+   ------------------------ */
+
+.question_sort_table{
+    width:100%;
+}
+
+.question_sort_table_fix{
+    width:90%;
+}
+
 /* ------------------------
             question
    ------------------------ */
@@ -129,6 +156,9 @@ footer{
 .vote_display{
     color: lightskyblue;
     font-size: 26px;
+}
+.comment_border{
+    border-bottom: 1px dimgrey solid;
 }
 /* ------------------------
             tags
@@ -265,6 +295,15 @@ textarea {
 }
 input[type="text"] {
     width: 40%;
+}
+input[type="text"].login{
+    width: auto;
+}
+input[type="submit"].big-button{
+    margin-top: 9px;
+    margin-left: 5%;
+    font-size: 1.1em;
+    padding:9px 9px;
 }
 /* ------------------------
             input

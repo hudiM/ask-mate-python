@@ -16,7 +16,7 @@ def check_login():
                       'permissions': data_manager.get_user_permission(escape(session['username']))}
     else:
         login_data = {'okey': False}
-    if str(request.path) not in ('/login', '/register', '/logout'):
+    if (str(request.path) not in ('/login', '/register', '/logout', '/new-tag')) and ('/tag/' not in str(request.path)):
         session['last_page'] = request.path
     return login_data
 # ------------------------
@@ -95,6 +95,13 @@ def route_user_register():
         return redirect('/')
     return render_template('registration.html', login_data=login_data, mode='register')
 
+@app.route('/user/edit/<user_id>')
+def route_user_edit(user_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
+    login_data = check_login()
+    return render_template('registration.html', login_data=login_data, mode='edit')
+
 @app.route('/login', methods=('GET','POST'))
 def route_user_login():
     success=False
@@ -127,32 +134,47 @@ def route_get_tags():
 
 @app.route('/question/<question_id>/edit-tag', methods=['GET','POST'])
 def route_edit_tags(question_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         data_manager.manage_tags(request.form.getlist('tag'), question_id)
-        return redirect(url_for('route_question', question_id=question_id))
+        return redirect('/question/'+str(question_id))
     tags = data_manager.get_tags_checked(question_id)
     return render_template('add_tag.html', tags=tags, login_data=login_data)
 
 @app.route('/new-tag', methods=['GET','POST'])
 def route_add_tag():
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         data_manager.add_tag(request.form)
-        return redirect(url_for('route_add_tag'))
+        if escape(session['last_page']) != '/':
+            return redirect(escape(session['last_page']))
+        return redirect('/')
     return render_template('new_tag.html', login_data=login_data)
 
 @app.route('/tag/<tag_id>/edit', methods=['GET','POST'])
 def route_edit_tag(tag_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         data_manager.edit_tag(request.form, tag_id)
+        if escape(session['last_page']) != '/':
+            return redirect(escape(session['last_page']))
         return redirect('/')
-    return render_template('new_tag.html', login_data=login_data)
+    tag = data_manager.get_tag(tag_id)
+    return render_template('new_tag.html', login_data=login_data, tag=tag)
 
 @app.route('/tag/<tag_id>/delete')
 def route_delete_tag(tag_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     data_manager.delete_tag(tag_id)
+    if escape(session['last_page']) != '/':
+        return redirect(escape(session['last_page']))
     return redirect('/')
 
 # ----------------------------------------------------------
@@ -161,6 +183,8 @@ def route_delete_tag(tag_id):
 
 @app.route('/add-question', methods=['GET', 'POST'])
 def route_add_question():
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         userid = data_manager.get_user_id_by_name(login_data['username'])
@@ -170,6 +194,8 @@ def route_add_question():
 
 @app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
 def route_question_edit(question_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         data_manager.edit_question(request.form, question_id)
@@ -179,11 +205,15 @@ def route_question_edit(question_id):
 
 @app.route('/question/<question_id>/delete')
 def route_question_delete(question_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     data_manager.delete_question(question_id)
     return redirect('/')
 
 @app.route('/answer/<answer_id>/mark')
 def route_question_mark(answer_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     user_id = data_manager.get_user_id_by_answer_id(answer_id)
     data_manager.question_mark(answer_id, user_id['user_id'])
     question_id = data_manager.get_question_id_by_answer_id(answer_id)
@@ -195,6 +225,8 @@ def route_question_mark(answer_id):
 
 @app.route('/question/<question_id>/new-answer', methods=['GET','POST'])
 def route_new_answer(question_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         data_manager.new_answer(request.form, question_id, login_data['id'])
@@ -203,6 +235,8 @@ def route_new_answer(question_id):
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
 def route_answer_edit(answer_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         question_id = data_manager.edit_answer(request.form, answer_id)
@@ -212,6 +246,8 @@ def route_answer_edit(answer_id):
 
 @app.route('/answer/<answer_id>/delete')
 def route_answer_delete(answer_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     question_id = data_manager.delete_answer(answer_id)
     return redirect('/question/'+ str(question_id))
 
@@ -221,6 +257,8 @@ def route_answer_delete(answer_id):
 
 @app.route('/question/<question_id>/new-comment', methods=['GET','POST'])
 def route_new_comment_question(question_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         data_manager.new_comment('question', request.form, question_id, login_data['id'])
@@ -229,6 +267,8 @@ def route_new_comment_question(question_id):
 
 @app.route('/answer/<answer_id>/new-comment', methods=['GET','POST'])
 def route_new_comment_answer(answer_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         data_manager.new_comment('answer', request.form, answer_id, login_data['id'])
@@ -237,6 +277,8 @@ def route_new_comment_answer(answer_id):
 
 @app.route('/comment/<comment_id>/edit', methods=['GET', 'POST'])
 def route_comment_edit(comment_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     login_data = check_login()
     if request.method == 'POST':
         question_id = data_manager.edit_comment(request.form, comment_id)
@@ -246,6 +288,8 @@ def route_comment_edit(comment_id):
 
 @app.route('/comment/<comment_id>/delete')
 def route_comment_delete(comment_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     question_id = data_manager.delete_comment(comment_id)
     return redirect('/question/'+ str(question_id))
 
@@ -255,6 +299,8 @@ def route_comment_delete(comment_id):
 
 @app.route('/answer/<answer_id>/vote-up')
 def route_vote_up(answer_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     user_id = data_manager.get_user_id_by_answer_id(answer_id)
     question_id = data_manager.vote('answer','up',answer_id)
     data_manager.answer_reputation(user_id['user_id'],'up')
@@ -262,6 +308,8 @@ def route_vote_up(answer_id):
 
 @app.route('/answer/<answer_id>/vote-down')
 def route_vote_down(answer_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     user_id = data_manager.get_user_id_by_answer_id(answer_id)
     question_id = data_manager.vote('answer','down',answer_id)
     data_manager.answer_reputation(user_id['user_id'],'down')
@@ -269,6 +317,8 @@ def route_vote_down(answer_id):
 
 @app.route('/question/<question_id>/vote-up')
 def route_vote_up_question(question_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     user_id = data_manager.get_user_id_by_question_id(question_id)
     data_manager.vote('question', 'up', question_id)
     data_manager.question_reputation(user_id['user_id'], 'up')
@@ -277,6 +327,8 @@ def route_vote_up_question(question_id):
 
 @app.route('/question/<question_id>/vote-down')
 def route_vote_down_question(question_id):
+    if 'username' not in escape(session):
+        return redirect('/login')
     user_id = data_manager.get_user_id_by_question_id(question_id)
     data_manager.vote('question','down',question_id)
     data_manager.question_reputation(user_id['user_id'], 'down')

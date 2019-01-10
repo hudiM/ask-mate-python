@@ -65,7 +65,7 @@ def get_answer(cursor, answer_id):
 
 @connection.connection_handler
 def get_answers_by_question_id(cursor, question_id):
-    cursor.execute("SELECT answer.*, users.name, users.image, users.reputation, users.color, users.permissions FROM answer LEFT JOIN users on answer.user_id = users.id WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
+    cursor.execute("SELECT answer.*, users.name, users.image, users.reputation, users.color, users.permissions FROM answer LEFT JOIN users on answer.user_id = users.id WHERE question_id='{0}' ORDER BY best_answer DESC,vote_number DESC, submission_time DESC;".format(question_id))
     return cursor.fetchall()
 
 # ---------------   comments   -----------------------------
@@ -104,6 +104,11 @@ def get_question_id_by_comment_id(cursor, comment_id):
     return ids['question_id']
 
 # ---------------   tags   ---------------------------------
+
+@connection.connection_handler
+def get_tag(cursor, tag_id):
+    cursor.execute('SELECT name, color FROM tag WHERE id=%s',(tag_id,))
+    return cursor.fetchone()
 
 @connection.connection_handler
 def get_tags_by_question_id(cursor, question_id):
@@ -154,7 +159,7 @@ def get_user_id_by_name(cursor, name):
 
 @connection.connection_handler
 def get_user_details(cursor, user_id):
-    cursor.execute('SELECT name, image, reputation, permissions, color FROM users WHERE id=%s',(user_id,))
+    cursor.execute('SELECT id, name, image, reputation, permissions, color FROM users WHERE id=%s',(user_id,))
     user = cursor.fetchall()
     return user[0]
 
@@ -380,7 +385,7 @@ def user_register(cursor, username, password, files):
     password = hash_password(password)
     filename = upload_image('./static/avatars', files)
     cursor.execute("INSERT INTO users (name, password,creation_date,reputation,image,color,permissions) "
-                   "VALUES (%s,%s,%s,0,%s,'white','user');",(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),filename))
+                   "VALUES (%s,%s,%s,0,%s,'white','User');",(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),filename))
     return False
 
 

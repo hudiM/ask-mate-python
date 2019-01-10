@@ -17,6 +17,9 @@
     <p>Reputation: {{ user['reputation'] }}<br>
     Email: Hidden<br>
     Country: Not set<br></p>
+    {% if user['name'] == login_data['username'] %}
+        <a href="/user/edit/{{ user['id'] }}">Edit profile</a>
+    {% endif %}
 {% endblock %}
 
 {% block content %}

@@ -8,7 +8,7 @@
     <h1>{{ question['title'] }}</h1>
     <table class="max_width question_answer_separator">
         <tr>
-            <td rowspan="5" width="3%"><!-- Voting -->
+            <td rowspan="5" width="5%"><!-- Voting -->
                 <table>
                         <tr>
                             <td>
@@ -35,8 +35,8 @@
                         </tr>
                 </table>
             </td>
-            <td>
-                <p class="size_question_message">{{ question["message"] }}</p>
+            <td width="95%" colspan="2" style="border-bottom: dimgrey 2px solid; padding-bottom: 3px;">
+                <p class="size_question_message table_text">{{ question["message"] }}</p>
             </td>
         </tr>
         <tr>
@@ -90,14 +90,14 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td style="padding-bottom: 9px;">
                 <p class="size_comment_title">Comments {% if login_data['okey'] == True %} [<a href="/question/{{ question["id"] }}/new-comment">new</a>] {% endif %}</p
             </td>
         </tr>
         <tr>
-            <td>
+            <td colspan="2">
                 {% for comment in question_comments %}
-                    <bdi class="q_comment">{{ comment['message'] }}</bdi>
+                    <bdi class="table_text">{{ comment['message'] }}</bdi>
                     <table>
                         <tr>
                             {% if login_data['okey'] == True and login_data['username'] == comment['name'] %}
@@ -121,9 +121,9 @@
     <h2>Answers {% if login_data['okey'] == True and login_data['username'] != question['name'] %} [<a href="/question/{{ question["id"] }}/new-answer">new</a>]{% endif %}</h2>
     {% for answer in answers %}
     {% if answer['best_answer'] == True %}<bdi style="color:springgreen">Marked as good answer</bdi>{% endif %}
-    <table class="max_width {% if answer['best_answer'] == True %}good_answer{% endif %}">
+    <table class="max_width {% if answer['best_answer'] == True %}good_answer{% else %}comment_border{% endif %}">
         <tr>
-            <td rowspan="3" width="3%"><table><!-- Answers voting -->
+            <td rowspan="4" width="5%" style="padding-right: 9px;"><table><!-- Answers voting -->
                 <tr>
                     {% if login_data['okey'] == True and login_data['username'] != answer['name'] %}
                         <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a></td>
@@ -143,7 +143,7 @@
                 </tr>
             </table></td>
             <td colspan="2"><!-- Answers message -->
-                {{ answer["message"] }}
+                <bdi class="table_text">{{ answer["message"] }}</bdi>
             </td>
         </tr>
         <tr>
@@ -178,12 +178,16 @@
         <tr>
             <td>
                 <p class="size_comment_title_small">Comments {% if login_data['okey'] == True %}[<a href="/answer/{{ answer["id"] }}/new-comment">new</a>] {% endif %}</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 {% for comments in answer_comments %}
                 {% for comment in comments %}
                     {% if comment['answer_id'] == answer['id'] %}
-                        <table class="reset_width" style="margin-left: 6px">
+                        <table class="reset_width reset_align" style="margin-left: 6px;">
                             <tr>
-                                <td colspan="5">{{ comment['message'] }}</td>
+                                <td colspan="6"><bdi class="table_text">{{ comment['message'] }}</bdi></td>
                             </tr>
                             <tr>
                                 {% if login_data['okey'] == True and login_data['username'] == comment['name'] %}
