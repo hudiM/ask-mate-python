@@ -54,7 +54,7 @@ def get_five_questions(cursor, sorting):
 
 @connection.connection_handler
 def get_question_by_id(cursor, question_id):
-    cursor.execute("SELECT question.*, users.name, users.image, users.reputation FROM question LEFT JOIN users on question.user_id = users.id WHERE question.id='{0}';".format(question_id))
+    cursor.execute("SELECT question.*, users.name, users.image, users.reputation, users.color, users.permissions FROM question LEFT JOIN users on question.user_id = users.id WHERE question.id='{0}';".format(question_id))
     return cursor.fetchall()[0]
 
 # ---------------   answers   ------------------------------
@@ -65,7 +65,7 @@ def get_answer(cursor, answer_id):
 
 @connection.connection_handler
 def get_answers_by_question_id(cursor, question_id):
-    cursor.execute("SELECT answer.*, users.name, users.image, users.reputation FROM answer LEFT JOIN users on answer.user_id = users.id WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
+    cursor.execute("SELECT answer.*, users.name, users.image, users.reputation, users.color, users.permissions FROM answer LEFT JOIN users on answer.user_id = users.id WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
     return cursor.fetchall()
 
 # ---------------   comments   -----------------------------
@@ -73,9 +73,9 @@ def get_answers_by_question_id(cursor, question_id):
 @connection.connection_handler
 def get_comments(cursor, mode, data_id):
     if mode == 'question':
-        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation FROM comment LEFT JOIN users on comment.user_id = users.id WHERE question_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE question_id={0};".format(data_id))
     if mode == 'answer':
-        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation FROM comment LEFT JOIN users on comment.user_id = users.id WHERE answer_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE answer_id={0};".format(data_id))
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -122,7 +122,7 @@ def get_tags_list(cursor):
 
 @connection.connection_handler
 def get_tags_checked(cursor, question_id): # something
-    cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', question_id)
+    cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', (question_id,))
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -134,7 +134,7 @@ def get_tags_with_question_number(cursor):
 
 @connection.connection_handler
 def get_all_user(cursor):
-    cursor.execute('SELECT name, creation_date, reputation, image, color FROM users')
+    cursor.execute('SELECT id, name, creation_date, reputation, image, color FROM users')
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -156,7 +156,7 @@ def get_user_details(cursor, user_id):
 @connection.connection_handler
 def get_user_activity(cursor, user_id):
     cursor.execute(
-        'SELECT question.id, title, message FROM question LEFT JOIN users ON question.user_id = users.id WHERE users.id = %s',
+        'SELECT question.id, title FROM question LEFT JOIN users ON question.user_id = users.id WHERE users.id = %s',
         (user_id,))
     questions = cursor.fetchall()
     cursor.execute(
@@ -185,13 +185,13 @@ def new_question(cursor, form, userid):
     return get_latest_question_id()
 
 @connection.connection_handler
-def new_comment(cursor, mode, form, data_id):
+def new_comment(cursor, mode, form, data_id, user_id):
     if mode == 'question':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
-                       (data_id,None,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, user_id) VALUES (%s,%s,%s,%s,%s,%s);",
+                       (data_id,None,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None, user_id))
     if mode == 'answer':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
-                       (None,data_id,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, user_id) VALUES (%s,%s,%s,%s,%s,%s);",
+                       (None,data_id,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None, user_id))
     return
 
 @connection.connection_handler

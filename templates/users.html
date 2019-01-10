@@ -6,21 +6,21 @@
 
 {% block content %}
     {% for user in users %}
-        <table>
+        <table class="size_users">
         <tr>
-            <td rowspan="2">
-                <img src="/static/avatars/{{ user['image'] }}" height="36" width="36">
+            <td rowspan="2" style="padding-right:9px;">
+                <img src="/static/avatars/{{ user['image'] }}" height="48" width="48">
             </td>
             <td>
-                <bdi style="color: {{ user['color'] }};">{{ user['name'] }}</bdi>
+                <a href="/user/{{ user['id'] }}" style="color: {{ user['color'] }};text-decoration: none;">{{ user['name'] }}</a>
             </td>
         </tr>
         <tr>
             <td>
-                <img src="/static/images/Calendar.png" height="16" width="16"> {{ user['creation_date'] }}
+                <img src="/static/images/Calendar.png" height="22" width="22"> {{ user['creation_date'] }}
             </td>
             <td>
-                <img src="/static/images/Reputation%20Badge.png" height="16" width="16"> {{ user['reputation'] }}
+                <img src="/static/images/Reputation%20Badge.png" height="22" width="22"> {{ user['reputation'] }}
             </td>
         </tr>
         </table>

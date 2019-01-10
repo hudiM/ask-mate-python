@@ -24,21 +24,31 @@ body {
     background-color: rgba(0,0,0,0.85);
 }
 
+.double-box{
+    display: block;
+    padding: 0;
+    height: 145px;
+    margin: 5px 20% 0 20%;
+}
+
 .content-wrapper-left{
+    float:left;
     display: inline-block;
-    width: 150px;
-    overflow: hidden;
-    padding: 2% 5% 2% 5%;
-    margin: 5px 0 0 20%;
+    padding-top: 15px;
+    width: 20%;
+    height: 120px;
+    margin: 0;
     border: 2px darkgrey solid;
     border-radius: 5px;
     background-color: rgba(0,0,0,0.85);
 }
 .content-wrapper-right{
+    float:right;
     display: inline-block;
-    width: auto;
-    margin: 5px 20% 0 0;
-    padding: 2% 5% 2% 5%;
+    width: 76%;
+    height: 135px;
+    padding-left: 15px;
+    margin: 0;
     border: 2px darkgrey solid;
     border-radius: 5px;
     background-color: rgba(0,0,0,0.85);
@@ -275,6 +285,10 @@ input[type="text"] {
 /* ------------------------
             Common
    ------------------------ */
+
+.size_users{
+    font-size: 22px;
+}
 
 .margin_up_down{
     margin-top: 5px;

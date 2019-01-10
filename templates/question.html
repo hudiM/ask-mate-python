@@ -51,7 +51,7 @@
                 <table class="user_display_box rightaligned">
                     <tr>
                         <td rowspan="2"><img src="/static/avatars/{{ question['image'] }}" width="48" height="48"></td>
-                        <td>{{ question['name'] }}</td>
+                        <td><a href="/user/{{ question['user_id'] }}" style="color:{{ question['color'] }};text-decoration: none;">{{ question['name'] }}</a></td>
                     </tr>
                     <tr>
                         <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ question['reputation'] }}</td>
@@ -91,7 +91,7 @@
                             <td class="center"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
                             <td class="center"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
                             <td>{{ comment['submission_time'] }}</td>
-                            <td>{{ comment['name'] }}</td>
+                            <td><a href="/user/{{ comment['user_id'] }}" style="color:{{ comment['color'] }};text-decoration: none;">{{ comment['name'] }}</a></td>
                             <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ comment['reputation'] }}</td>
                         </tr>
                     </table>
@@ -137,7 +137,7 @@
                 <table class="{% if answer['best_answer'] == True %}user_display_box_best{% else %}user_display_box{% endif %} rightaligned">
                     <tr>
                         <td rowspan="2"><img src="/static/avatars/{{ answer['image'] }}" width="48" height="48"></td>
-                        <td>{{ answer['name'] }}</td>
+                        <td><a href="/user/{{ answer['user_id'] }}" style="color:{{ answer['color'] }};text-decoration: none;">{{ answer['name'] }}</a></td>
                     </tr>
                     <tr>
                         <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ answer['reputation'] }}</td>
@@ -159,7 +159,7 @@
                                 <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
                                 <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
                                 <td>{{ comment['submission_time'] }}</td>
-                                <td>{{ comment['name'] }}</td>
+                                <td><a href="/user/{{ comment['user_id'] }}" style="color:{{ comment['color'] }};text-decoration: none;">{{ comment['name'] }}</a></td>
                                 <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ comment['reputation'] }}</td>
                             </tr>
                         </table>
