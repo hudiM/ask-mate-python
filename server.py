@@ -9,9 +9,16 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def check_login():
     if 'username' in session:
-        login_data = {'okey': True, 'username': escape(session['username']), 'image': data_manager.get_user_pic(escape(session['username'])), 'id':data_manager.get_user_id_by_name(escape(session['username']))}
+        login_data = {'okey': True, 'username': escape(session['username']),
+                      'image': data_manager.get_user_pic(escape(session['username'])),
+                      'id':data_manager.get_user_id_by_name(escape(session['username'])),
+                      'permissions': data_manager.get_user_permission(escape(session['username']))}
+        if str(request.path) not in ('/login', '/register', '/logout'):
+            session['last_page'] = request.path
     else:
         login_data = {'okey': False}
+        if str(request.path) not in ('/login', '/register', '/logout'):
+            session['last_page'] = request.path
     return login_data
 # ------------------------
 #           main
@@ -53,7 +60,7 @@ def route_question(question_id):
     answer_comments = []
     for answer in answers:
         answer_comments.append(data_manager.get_comments('answer', answer['id']))
-    return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags, login_data=login_data)
+    return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags, login_data=login_data, moderators=['Admin','Moderator'])
 
 # ----------------------------------------------------------
 #                   user
@@ -82,6 +89,8 @@ def route_user_register():
     if request.method == 'POST':
         data_manager.user_register(request.form['username'],request.form['password'],request.files)
         session['username'] = request.form['username']
+        if escape(session['last_page']) != '/':
+            return redirect(escape(session['last_page']))
         return redirect('/')
     return render_template('registration.html', login_data=login_data, mode='register')
 
@@ -91,12 +100,17 @@ def route_user_login():
     if request.method == 'POST':
         if data_manager.user_login(request.form['username'],request.form['password']):
             session['username'] = request.form['username']
+            if escape(session['last_page']) != '/':
+                return redirect(escape(session['last_page']))
             return redirect('/')
     return render_template('registration.html', login_data=login_data, mode='login')
 
 @app.route('/logout')
 def route_user_logout():
+    login_data = check_login()
     session.pop('username', None)
+    if escape(session['last_page']) != '/':
+        return redirect(escape(session['last_page']))
     return redirect('/')
 
 # ----------------------------------------------------------

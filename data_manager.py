@@ -73,9 +73,9 @@ def get_answers_by_question_id(cursor, question_id):
 @connection.connection_handler
 def get_comments(cursor, mode, data_id):
     if mode == 'question':
-        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE question_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE question_id={0} ORDER BY submission_time;".format(data_id))
     if mode == 'answer':
-        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE answer_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE answer_id={0} ORDER BY submission_time;".format(data_id))
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -141,6 +141,11 @@ def get_all_user(cursor):
 def get_user_pic(cursor, name):
     cursor.execute('SELECT image FROM users WHERE name=%s',(name,))
     return cursor.fetchone()['image']
+
+@connection.connection_handler
+def get_user_permission(cursor, name):
+    cursor.execute('SELECT permissions FROM users WHERE name=%s',(name,))
+    return cursor.fetchone()['permissions']
 
 @connection.connection_handler
 def get_user_id_by_name(cursor, name):

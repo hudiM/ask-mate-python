@@ -94,6 +94,10 @@ footer{
     font-size: 24px;
     margin: 0;
 }
+.size_comment_title_small{
+    font-weight: bold;
+    margin: 3px 0 7px 0;
+}
 
 .good_answer{
     border: springgreen 2px solid;
@@ -121,6 +125,10 @@ footer{
     border-radius: 5px;
     background-color: rgba(120,120,120,0.2);
     display: block;
+}
+.vote_display{
+    color: lightskyblue;
+    font-size: 26px;
 }
 /* ------------------------
             tags

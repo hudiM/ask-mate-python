@@ -12,17 +12,25 @@
                 <table>
                         <tr>
                             <td>
-                                {% if login_data['okey'] == True %}<a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>{% endif %}
+                                {% if login_data['okey'] == True and login_data['username'] != question['name'] %}
+                                    <a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>
+                                {% else %}
+                                    <img src="/static/images/Arrow%20Up.png" height="30" width="30" style="opacity: 0.5;">
+                                {% endif %}
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class="center vote_display">
                                 {{ question["vote_number"] }}
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                {% if login_data['okey'] == True %}<a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>{% endif %}
+                                {% if login_data['okey'] == True and login_data['username'] != question['name'] %}
+                                    <a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>
+                                {% else %}
+                                    <img src="/static/images/Arrow%20Down.png" height="30" width="30" style="opacity: 0.5;">
+                                {% endif %}
                             </td>
                         </tr>
                 </table>
@@ -45,7 +53,9 @@
                         {% endif %}
                     {% endif %}
                 {% endfor %}
-                <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
+                {% if login_data['okey'] == True and (login_data['username'] == question['name'] or login_data['permissions'] in moderators) %}
+                    <a href="/question/{{ question['id'] }}/edit-tag"><img src="/static/images/plus.png" height="16" width="16" class="img_tag_fix"></a>
+                {% endif %}
             </p></td>
             <td rowspan="2">
                 <table class="user_display_box rightaligned">
@@ -63,16 +73,18 @@
             <td>
                 <table>
                     <tr>
-                        {% if login_data['okey'] == True %}
-                        <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/edit"><img src="/static/images/Edit.png" height="16" width="16"></a></td>
-                        <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/delete"><img src="/static/images/Delete.png" height="16" width="16"></a></td>
+                        {% if login_data['okey'] == True and login_data['username'] == question['name'] %}
+                            <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/edit"><img src="/static/images/Edit.png" height="16" width="16"></a></td>
+                        {% endif %}
+                        {% if login_data['okey'] == True and (login_data['username'] == question['name'] or login_data['permissions'] in moderators) %}
+                            <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/delete"><img src="/static/images/Delete.png" height="16" width="16"></a></td>
                         {% endif %}
                         <th>Views</th>
                         <th>Submission time</th>
                     </tr>
                     <tr>
                         <td class="center">{{ question["view_number"] }}</td>
-                        <td class="center">{{ question["submission_time"] }}</td>
+                        <td class="center" style="color:#BBBBBB;">{{ question["submission_time"] }}</td>
                     </tr>
                 </table>
             </td>
@@ -88,9 +100,13 @@
                     <bdi class="q_comment">{{ comment['message'] }}</bdi>
                     <table>
                         <tr>
-                            <td class="center"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
-                            <td class="center"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
-                            <td>{{ comment['submission_time'] }}</td>
+                            {% if login_data['okey'] == True and login_data['username'] == comment['name'] %}
+                                <td class="center"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
+                            {% endif %}
+                            {% if login_data['okey'] == True and (login_data['username'] == comment['name'] or login_data['permissions'] in moderators) %}
+                                <td class="center"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
+                            {% endif %}
+                            <td style="color:#BBBBBB;">{{ comment['submission_time'] }}</td>
                             <td><a href="/user/{{ comment['user_id'] }}" style="color:{{ comment['color'] }};text-decoration: none;">{{ comment['name'] }}</a></td>
                             <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ comment['reputation'] }}</td>
                         </tr>
@@ -102,20 +118,28 @@
     <!------------------------------------------------------------------------------------------------------------------
     -------------------------------------------------  Answers  --------------------------------------------------------
     ------------------------------------------------------------------------------------------------------------------->
-    <h2>Answers {% if login_data['okey'] == True %} [<a href="/question/{{ question["id"] }}/new-answer">new</a>]{% endif %}</h2>
+    <h2>Answers {% if login_data['okey'] == True and login_data['username'] != question['name'] %} [<a href="/question/{{ question["id"] }}/new-answer">new</a>]{% endif %}</h2>
     {% for answer in answers %}
     {% if answer['best_answer'] == True %}<bdi style="color:springgreen">Marked as good answer</bdi>{% endif %}
     <table class="max_width {% if answer['best_answer'] == True %}good_answer{% endif %}">
         <tr>
             <td rowspan="3" width="3%"><table><!-- Answers voting -->
                 <tr>
-                    <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a></td>
+                    {% if login_data['okey'] == True and login_data['username'] != answer['name'] %}
+                        <td><a href="/answer/{{ answer['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a></td>
+                    {% else %}
+                        <td><img src="/static/images/Arrow%20Up.png" height="30" width="30" style="opacity: 0.5;"></td>
+                    {% endif %}
                 </tr>
                 <tr>
-                    <td class="center">{{ answer["vote_number"] }}</td>
+                    <td class="center vote_display">{{ answer["vote_number"] }}</td>
                 </tr>
                 <tr>
-                    <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a></td>
+                    {% if login_data['okey'] == True and login_data['username'] != answer['name'] %}
+                        <td><a href="/answer/{{ answer['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a></td>
+                    {% else %}
+                        <td><img src="/static/images/Arrow%20Down.png" height="30" width="30" style="opacity: 0.5;"></td>
+                    {% endif %}
                 </tr>
             </table></td>
             <td colspan="2"><!-- Answers message -->
@@ -126,10 +150,16 @@
             <td>
                 <table class="reset_width">
                 <tr>
-                    <td class="center"><a href="/answer/{{ answer['id'] }}/mark"><img src="/static/images/Checkmark.png" height="12" width="12"></a></td>
-                    <td class="center"><a href="/answer/{{ answer['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
-                    <td class="center"><a href="/answer/{{ answer['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
-                    <td class="center">{{ answer["submission_time"] }}</td>
+                    {% if login_data['okey'] == True and (login_data['username'] == question['name'] or login_data['permissions'] in moderators) %}
+                        <td class="center"><a href="/answer/{{ answer['id'] }}/mark"><img src="/static/images/Checkmark.png" height="12" width="12"></a></td>
+                    {% endif %}
+                    {% if login_data['okey'] == True and login_data['username'] == answer['name'] %}
+                        <td class="center"><a href="/answer/{{ answer['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
+                    {% endif %}
+                    {% if login_data['okey'] == True and (login_data['username'] == answer['name'] or login_data['permissions'] in moderators) %}
+                        <td class="center"><a href="/answer/{{ answer['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
+                    {% endif %}
+                    <td class="center" style="color:#BBBBBB;">{{ answer["submission_time"] }}</td>
                 </tr>
                 </table>
             </td>
@@ -147,18 +177,22 @@
         </tr>
         <tr>
             <td>
-                Comments {% if login_data['okey'] == True %}[<a href="/answer/{{ answer["id"] }}/new-comment">new</a>] {% endif %}
+                <p class="size_comment_title_small">Comments {% if login_data['okey'] == True %}[<a href="/answer/{{ answer["id"] }}/new-comment">new</a>] {% endif %}</p>
                 {% for comments in answer_comments %}
                 {% for comment in comments %}
                     {% if comment['answer_id'] == answer['id'] %}
-                        <table class="reset_width">
+                        <table class="reset_width" style="margin-left: 6px">
                             <tr>
                                 <td colspan="5">{{ comment['message'] }}</td>
                             </tr>
                             <tr>
-                                <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
-                                <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
-                                <td>{{ comment['submission_time'] }}</td>
+                                {% if login_data['okey'] == True and login_data['username'] == comment['name'] %}
+                                    <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/edit"><img src="/static/images/Edit.png" height="12" width="12"></a></td>
+                                {% endif %}
+                                {% if login_data['okey'] == True and (login_data['username'] == comment['name'] or login_data['permissions'] in moderators) %}
+                                    <td class="center" rowspan="2"><a href="/comment/{{ comment['id'] }}/delete"><img src="/static/images/Delete.png" height="12" width="12"></a></td>
+                                {% endif %}
+                                <td style="color:#BBBBBB;">{{ comment['submission_time'] }}</td>
                                 <td><a href="/user/{{ comment['user_id'] }}" style="color:{{ comment['color'] }};text-decoration: none;">{{ comment['name'] }}</a></td>
                                 <td><img src="/static/images/Reputation%20Badge.png" height="16" width="16">{{ comment['reputation'] }}</td>
                             </tr>
