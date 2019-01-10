@@ -172,6 +172,8 @@ def get_user_activity(cursor, user_id):
         'SELECT question_id, answer_id, message FROM comment LEFT JOIN users ON comment.user_id = users.id WHERE users.id = %s',
         (user_id,))
     comments = cursor.fetchall()
+    if questions == []:
+        questions = [0]
     return questions[0], answers, comments
 
 
@@ -319,8 +321,12 @@ def answer_reputation(cursor, user_id, direction):
 @connection.connection_handler
 def question_mark(cursor, answer_id, user_id):
     cursor.execute('SELECT best_answer FROM answer WHERE id=%s',(answer_id,))
-    cursor.execute('UPDATE answer SET best_answer=%s where id=%s',(not cursor.fetchone()['best_answer'],answer_id))
-    cursor.execute('UPDATE users SET reputation = reputation + 15 WHERE id= {0};'.format(user_id,))
+    is_best_answer = cursor.fetchone()['best_answer']
+    cursor.execute('UPDATE answer SET best_answer=%s where id=%s',(not is_best_answer,answer_id))
+    if is_best_answer:
+        cursor.execute('UPDATE users SET reputation = reputation - 15 WHERE id= {0};'.format(user_id,))
+    else:
+        cursor.execute('UPDATE users SET reputation = reputation + 15 WHERE id= {0};'.format(user_id,))
 
 # ----------------------------------------------------------
 #                   views
@@ -359,14 +365,23 @@ def verify_password(plain_text_password, hashed_password):
 def user_login(cursor, username, password):
     cursor.execute("SELECT password FROM users WHERE name = %s;",(username,))
     database_password = cursor.fetchone()
+    if database_password is None:
+        database_password = {'password': ''}
     return verify_password(password,database_password['password'])
 
 @connection.connection_handler
 def user_register(cursor, username, password, files):
+    if password == '' or username == '':
+        return 1
+    cursor.execute("select name from users")
+    for item in cursor.fetchall():
+        if username == item['name']:
+            return 2
     password = hash_password(password)
     filename = upload_image('./static/avatars', files)
     cursor.execute("INSERT INTO users (name, password,creation_date,reputation,image,color,permissions) "
                    "VALUES (%s,%s,%s,0,%s,'white','user');",(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),filename))
+    return False
 
 
 @connection.connection_handler
