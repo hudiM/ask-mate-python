@@ -12,7 +12,7 @@
                 <table>
                         <tr>
                             <td>
-                                <a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>
+                                {% if login_data['okey'] == True %}<a href="/question/{{ question['id'] }}/vote-up"><img src="/static/images/Arrow%20Up.png" height="30" width="30"></a>{% endif %}
                             </td>
                         </tr>
                         <tr>
@@ -22,7 +22,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>
+                                {% if login_data['okey'] == True %}<a href="/question/{{ question['id'] }}/vote-down"><img src="/static/images/Arrow%20Down.png" height="30" width="30" class="a_vote_fix"></a>{% endif %}
                             </td>
                         </tr>
                 </table>
@@ -63,8 +63,10 @@
             <td>
                 <table>
                     <tr>
+                        {% if login_data['okey'] == True %}
                         <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/edit"><img src="/static/images/Edit.png" height="16" width="16"></a></td>
                         <td class="center" rowspan="2"><a href="/question/{{ question['id'] }}/delete"><img src="/static/images/Delete.png" height="16" width="16"></a></td>
+                        {% endif %}
                         <th>Views</th>
                         <th>Submission time</th>
                     </tr>
@@ -77,7 +79,7 @@
         </tr>
         <tr>
             <td>
-                <p class="size_comment_title">Comments [<a href="/question/{{ question["id"] }}/new-comment">new</a>]</p>
+                <p class="size_comment_title">Comments {% if login_data['okey'] == True %} [<a href="/question/{{ question["id"] }}/new-comment">new</a>] {% endif %}</p
             </td>
         </tr>
         <tr>
@@ -100,7 +102,7 @@
     <!------------------------------------------------------------------------------------------------------------------
     -------------------------------------------------  Answers  --------------------------------------------------------
     ------------------------------------------------------------------------------------------------------------------->
-    <h2>Answers [<a href="/question/{{ question["id"] }}/new-answer">new</a>]</h2>
+    <h2>Answers {% if login_data['okey'] == True %} [<a href="/question/{{ question["id"] }}/new-answer">new</a>]{% endif %}</h2>
     {% for answer in answers %}
     {% if answer['best_answer'] == True %}<bdi style="color:springgreen">Marked as good answer</bdi>{% endif %}
     <table class="max_width {% if answer['best_answer'] == True %}good_answer{% endif %}">
@@ -145,7 +147,7 @@
         </tr>
         <tr>
             <td>
-                Comments [<a href="/answer/{{ answer["id"] }}/new-comment">new</a>]
+                Comments {% if login_data['okey'] == True %}[<a href="/answer/{{ answer["id"] }}/new-comment">new</a>] {% endif %}
                 {% for comments in answer_comments %}
                 {% for comment in comments %}
                     {% if comment['answer_id'] == answer['id'] %}

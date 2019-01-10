@@ -14,7 +14,9 @@
         </div>
     {% else %}
     <h3>AskMate</h3>
-    <a href="/add-question">Ask a question</a>
+        {% if login_data['okey'] == True %}
+            <a href="/add-question">Ask a question</a>
+        {% endif %}
     <h3>
         <table class="question_sort_table">
             <td>Questions</td>
