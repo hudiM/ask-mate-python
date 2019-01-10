@@ -9,9 +9,15 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def check_login():
     if 'username' in session:
-        login_data = {'okey': True, 'username': escape(session['username']), 'image': data_manager.get_user_pic(escape(session['username']))}
+        login_data = {'okey': True,
+                      'username': escape(session['username']),
+                      'image': data_manager.get_user_pic(escape(session['username'])),
+                      'id':data_manager.get_user_id_by_name(escape(session['username'])),
+                      'permissions': data_manager.get_user_permission(escape(session['username']))}
     else:
         login_data = {'okey': False}
+    if str(request.path) not in ('/login', '/register', '/logout'):
+        session['last_page'] = request.path
     return login_data
 # ------------------------
 #           main
@@ -53,14 +59,22 @@ def route_question(question_id):
     answer_comments = []
     for answer in answers:
         answer_comments.append(data_manager.get_comments('answer', answer['id']))
-    print(question)
-    print(answers)
-    print(answer_comments)
-    return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags, login_data=login_data)
+    return render_template('question.html', question=question, answers = answers, question_comments=question_comments, answer_comments=answer_comments, tags=tags, login_data=login_data, moderators=['Admin','Moderator'])
 
 # ----------------------------------------------------------
 #                   user
 # ----------------------------------------------------------
+
+@app.route('/user/<user_id>')
+def route_user_profile(user_id):
+    login_data = check_login()
+    question, answers, comments = data_manager.get_user_activity(user_id)
+    user = data_manager.get_user_details(user_id)
+    for comment in comments:
+        if comment['question_id'] is None:
+            print('ID:',data_manager.get_question_id_by_answer_id(comment['answer_id']))
+            comment['question_id'] = data_manager.get_question_id_by_answer_id(comment['answer_id'])
+    return render_template('user.html', user=user, question=question, answers=answers, comments=comments, login_data=login_data)
 
 @app.route('/users')
 def route_user_list():
@@ -68,28 +82,38 @@ def route_user_list():
     users = data_manager.get_all_user()
     return render_template('users.html', login_data=login_data, users=users)
 
-
 @app.route('/register', methods=('GET','POST'))
 def route_user_register():
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.user_register(request.form['username'],request.form['password'],request.files)
+        success = data_manager.user_register(request.form['username'],request.form['password'],request.files)
+        if success:
+            return render_template('registration.html', login_data=login_data, mode='register', success=success)
         session['username'] = request.form['username']
+        if escape(session['last_page']) != '/':
+            return redirect(escape(session['last_page']))
         return redirect('/')
     return render_template('registration.html', login_data=login_data, mode='register')
 
 @app.route('/login', methods=('GET','POST'))
 def route_user_login():
+    success=False
     login_data = check_login()
     if request.method == 'POST':
         if data_manager.user_login(request.form['username'],request.form['password']):
             session['username'] = request.form['username']
+            if escape(session['last_page']) != '/':
+                return redirect(escape(session['last_page']))
             return redirect('/')
-    return render_template('registration.html', login_data=login_data, mode='login')
+        else:
+            success=True
+    return render_template('registration.html', login_data=login_data, mode='login', success=success)
 
 @app.route('/logout')
 def route_user_logout():
     session.pop('username', None)
+    if escape(session['last_page']) != '/':
+        return redirect(escape(session['last_page']))
     return redirect('/')
 
 # ----------------------------------------------------------
@@ -139,7 +163,8 @@ def route_delete_tag(tag_id):
 def route_add_question():
     login_data = check_login()
     if request.method == 'POST':
-        question_id = data_manager.new_question(request.form)
+        userid = data_manager.get_user_id_by_name(login_data['username'])
+        question_id = data_manager.new_question(request.form, userid)
         return redirect('/question/' + str(question_id))
     return render_template('new_question.html', question = None, login_data=login_data)
 
@@ -159,7 +184,8 @@ def route_question_delete(question_id):
 
 @app.route('/answer/<answer_id>/mark')
 def route_question_mark(answer_id):
-    data_manager.question_mark(answer_id)
+    user_id = data_manager.get_user_id_by_answer_id(answer_id)
+    data_manager.question_mark(answer_id, user_id['user_id'])
     question_id = data_manager.get_question_id_by_answer_id(answer_id)
     return redirect('/question/'+str(question_id))
 
@@ -171,7 +197,7 @@ def route_question_mark(answer_id):
 def route_new_answer(question_id):
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.new_answer(request.form, question_id)
+        data_manager.new_answer(request.form, question_id, login_data['id'])
         return redirect('/question/'+str(question_id))
     return render_template('new_answer.html', question_id = question_id, answer=None, login_data=login_data)
 
@@ -197,7 +223,7 @@ def route_answer_delete(answer_id):
 def route_new_comment_question(question_id):
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.new_comment('question', request.form, question_id)
+        data_manager.new_comment('question', request.form, question_id, login_data['id'])
         return redirect('/question/'+str(question_id))
     return render_template('new_comment.html', comment=None, login_data=login_data)
 
@@ -205,7 +231,7 @@ def route_new_comment_question(question_id):
 def route_new_comment_answer(answer_id):
     login_data = check_login()
     if request.method == 'POST':
-        data_manager.new_comment('answer', request.form, answer_id)
+        data_manager.new_comment('answer', request.form, answer_id, login_data['id'])
         return redirect('/question/'+str(data_manager.get_question_id_by_answer_id(answer_id)))
     return render_template('new_comment.html', comment=None, login_data=login_data)
 
@@ -229,22 +255,31 @@ def route_comment_delete(comment_id):
 
 @app.route('/answer/<answer_id>/vote-up')
 def route_vote_up(answer_id):
+    user_id = data_manager.get_user_id_by_answer_id(answer_id)
     question_id = data_manager.vote('answer','up',answer_id)
+    data_manager.answer_reputation(user_id['user_id'],'up')
     return redirect(url_for('route_question', question_id=question_id))
 
 @app.route('/answer/<answer_id>/vote-down')
 def route_vote_down(answer_id):
+    user_id = data_manager.get_user_id_by_answer_id(answer_id)
     question_id = data_manager.vote('answer','down',answer_id)
+    data_manager.answer_reputation(user_id['user_id'],'down')
     return redirect(url_for('route_question', question_id=question_id))
 
 @app.route('/question/<question_id>/vote-up')
 def route_vote_up_question(question_id):
-    data_manager.vote('question','up',question_id)
-    return redirect('/question/'+question_id)
+    user_id = data_manager.get_user_id_by_question_id(question_id)
+    data_manager.vote('question', 'up', question_id)
+    data_manager.question_reputation(user_id['user_id'], 'up')
+    return redirect('/question/' + question_id)
+
 
 @app.route('/question/<question_id>/vote-down')
 def route_vote_down_question(question_id):
+    user_id = data_manager.get_user_id_by_question_id(question_id)
     data_manager.vote('question','down',question_id)
+    data_manager.question_reputation(user_id['user_id'], 'down')
     return redirect('/question/'+question_id)
 
 # ----------------------------------------------------------

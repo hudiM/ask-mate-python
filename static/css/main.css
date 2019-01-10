@@ -9,20 +9,50 @@ body {
     margin: 0;
     font-family: Helvetica ,Arial, serif;
     min-width:1280px;        /* Suppose you want minimum width of 1000px */
-    width: auto !important;  /* Firefox will set width as auto */
-    width:1280px;            /* As IE6 ignores !important it will set width as 1000px; */
 }
 
 .neko{
     vertical-align: bottom;
 }
 
-.content-wrapper {
-    margin: 5px 20% 0 20%;
+.content-wrapper{
+    display: block;
     padding: 2% 5% 2% 5%;
+    margin: 5px 20% 0 20%;
     border: 2px darkgrey solid;
     border-radius: 5px;
     background-color: rgba(0,0,0,0.85);
+}
+
+.double-box{
+    display: block;
+    padding: 0;
+    height: 145px;
+    margin: 5px 20% 0 20%;
+}
+
+.content-wrapper-left{
+    float:left;
+    display: inline-block;
+    padding-top: 15px;
+    width: 20%;
+    height: 120px;
+    margin: 0;
+    border: 2px darkgrey solid;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.85);
+}
+.content-wrapper-right{
+    float:right;
+    display: inline-block;
+    width: 76%;
+    height: 135px;
+    padding-left: 15px;
+    margin: 0;
+    border: 2px darkgrey solid;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.85);
+    vertical-align:top;
 }
 
 footer{
@@ -64,6 +94,10 @@ footer{
     font-size: 24px;
     margin: 0;
 }
+.size_comment_title_small{
+    font-weight: bold;
+    margin: 3px 0 7px 0;
+}
 
 .good_answer{
     border: springgreen 2px solid;
@@ -91,6 +125,10 @@ footer{
     border-radius: 5px;
     background-color: rgba(120,120,120,0.2);
     display: block;
+}
+.vote_display{
+    color: lightskyblue;
+    font-size: 26px;
 }
 /* ------------------------
             tags
@@ -255,6 +293,10 @@ input[type="text"] {
 /* ------------------------
             Common
    ------------------------ */
+
+.size_users{
+    font-size: 22px;
+}
 
 .margin_up_down{
     margin-top: 5px;

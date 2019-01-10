@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AskMate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+<nav id="links">
+    {% block links %} {% endblock %}
+</nav>
+
+<div class="double-box">
+    <div class="content-wrapper-left">
+        {% block userprofile %} {% endblock %}
+    </div>
+    <div class="content-wrapper-right">
+        {% block userdata %} {% endblock %}
+    </div>
+</div>
+
+
+<div class="content-wrapper">
+    {% block content %} {% endblock %}
+</div>
+
+</body>
+</html>

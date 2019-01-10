@@ -54,7 +54,7 @@ def get_five_questions(cursor, sorting):
 
 @connection.connection_handler
 def get_question_by_id(cursor, question_id):
-    cursor.execute("SELECT *, users.name, users.image, users.reputation FROM question LEFT JOIN users on question.user_id = users.id WHERE question.id='{0}';".format(question_id))
+    cursor.execute("SELECT question.*, users.name, users.image, users.reputation, users.color, users.permissions FROM question LEFT JOIN users on question.user_id = users.id WHERE question.id='{0}';".format(question_id))
     return cursor.fetchall()[0]
 
 # ---------------   answers   ------------------------------
@@ -65,7 +65,7 @@ def get_answer(cursor, answer_id):
 
 @connection.connection_handler
 def get_answers_by_question_id(cursor, question_id):
-    cursor.execute("SELECT answer.*, users.name, users.image, users.reputation FROM answer LEFT JOIN users on answer.user_id = users.id WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
+    cursor.execute("SELECT answer.*, users.name, users.image, users.reputation, users.color, users.permissions FROM answer LEFT JOIN users on answer.user_id = users.id WHERE question_id='{0}' ORDER BY vote_number DESC, submission_time DESC;".format(question_id))
     return cursor.fetchall()
 
 # ---------------   comments   -----------------------------
@@ -73,9 +73,9 @@ def get_answers_by_question_id(cursor, question_id):
 @connection.connection_handler
 def get_comments(cursor, mode, data_id):
     if mode == 'question':
-        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation FROM comment LEFT JOIN users on comment.user_id = users.id WHERE question_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE question_id={0} ORDER BY submission_time;".format(data_id))
     if mode == 'answer':
-        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation FROM comment LEFT JOIN users on comment.user_id = users.id WHERE answer_id={0};".format(data_id))
+        cursor.execute("SELECT comment.*, users.name, users.image, users.reputation, users.color, users.permissions FROM comment LEFT JOIN users on comment.user_id = users.id WHERE answer_id={0} ORDER BY submission_time;".format(data_id))
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -122,7 +122,7 @@ def get_tags_list(cursor):
 
 @connection.connection_handler
 def get_tags_checked(cursor, question_id): # something
-    cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', question_id)
+    cursor.execute('SELECT name, color, color_mode, id, (question_id IS NOT NULL) as checked  FROM tag LEFT JOIN question_tag ON tag.id=question_tag.tag_id AND question_id = %s ORDER BY id, question_id;', (question_id,))
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -134,7 +134,7 @@ def get_tags_with_question_number(cursor):
 
 @connection.connection_handler
 def get_all_user(cursor):
-    cursor.execute('SELECT name, creation_date, reputation, image, color FROM users')
+    cursor.execute('SELECT id, name, creation_date, reputation, image, color FROM users')
     return cursor.fetchall()
 
 @connection.connection_handler
@@ -142,28 +142,75 @@ def get_user_pic(cursor, name):
     cursor.execute('SELECT image FROM users WHERE name=%s',(name,))
     return cursor.fetchone()['image']
 
+@connection.connection_handler
+def get_user_permission(cursor, name):
+    cursor.execute('SELECT permissions FROM users WHERE name=%s',(name,))
+    return cursor.fetchone()['permissions']
+
+@connection.connection_handler
+def get_user_id_by_name(cursor, name):
+    cursor.execute('SELECT id FROM users WHERE name = %s', (name,))
+    return cursor.fetchone()['id']
+
+@connection.connection_handler
+def get_user_details(cursor, user_id):
+    cursor.execute('SELECT name, image, reputation, permissions, color FROM users WHERE id=%s',(user_id,))
+    user = cursor.fetchall()
+    return user[0]
+
+@connection.connection_handler
+def get_user_activity(cursor, user_id):
+    cursor.execute(
+        'SELECT question.id, title FROM question LEFT JOIN users ON question.user_id = users.id WHERE users.id = %s',
+        (user_id,))
+    questions = cursor.fetchall()
+    cursor.execute(
+        'SELECT question_id, message FROM answer LEFT JOIN users ON answer.user_id = users.id WHERE users.id = %s',
+        (user_id,))
+    answers = cursor.fetchall()
+    cursor.execute(
+        'SELECT question_id, answer_id, message FROM comment LEFT JOIN users ON comment.user_id = users.id WHERE users.id = %s',
+        (user_id,))
+    comments = cursor.fetchall()
+    if questions == []:
+        questions = [0]
+    return questions[0], answers, comments
+
+
+@connection.connection_handler
+def get_user_id_by_question_id(cursor, question_id):
+    cursor.execute("SELECT user_id FROM question WHERE id={0}". format(question_id))
+    return cursor.fetchone()
+
+
+@connection.connection_handler
+def get_user_id_by_answer_id(cursor, answer_id):
+    cursor.execute("SELECT user_id FROM answer WHERE id={0}". format(answer_id))
+    return cursor.fetchone()
+
 # ----------------------------------------------------------
 #                   add
 # ----------------------------------------------------------
 
 @connection.connection_handler
-def new_answer(cursor, form, question_id):
-    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message) VALUES ('{0}',0,'{1}', %s);".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id),(form['message'],))
+def new_answer(cursor, form, question_id, user_id):
+    cursor.execute("INSERT INTO answer (submission_time, vote_number, question_id, message, user_id, best_answer) VALUES ('{0}',0,'{1}', %s, %s, %s);".format(str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),question_id),(form['message'],user_id, False))
     return
 
 @connection.connection_handler
-def new_question(cursor, form):
-    cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message) VALUES ('{0}','0','0', %s, %s);".format(datetime.now()),(form['title'],form['message']))
+def new_question(cursor, form, userid):
+    cursor.execute("INSERT INTO question (submission_time, view_number, vote_number, title, message, user_id) "
+                   "VALUES ('{0}','0','0', %s, %s, %s);".format(datetime.now()),(form['title'],form['message'], userid))
     return get_latest_question_id()
 
 @connection.connection_handler
-def new_comment(cursor, mode, form, data_id):
+def new_comment(cursor, mode, form, data_id, user_id):
     if mode == 'question':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
-                       (data_id,None,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, user_id) VALUES (%s,%s,%s,%s,%s,%s);",
+                       (data_id,None,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None, user_id))
     if mode == 'answer':
-        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count) VALUES (%s,%s,%s,%s,%s);",
-                       (None,data_id,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None))
+        cursor.execute("INSERT INTO comment (question_id, answer_id, message, submission_time, edited_count, user_id) VALUES (%s,%s,%s,%s,%s,%s);",
+                       (None,data_id,form['message'],str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),None, user_id))
     return
 
 @connection.connection_handler
@@ -250,14 +297,36 @@ def vote(cursor, mode, direction, data_id):
     page_view_counter('down', data_id)
     return
 
+
+@connection.connection_handler
+def question_reputation(cursor, user_id, direction):
+    if direction == 'up':
+        cursor.execute("UPDATE users SET reputation = reputation + 5 WHERE id={0};".format(user_id,))
+    if direction == 'down':
+        cursor.execute("UPDATE users SET reputation = reputation - 2 WHERE id={0};".format(user_id,))
+    return
+
+@connection.connection_handler
+def answer_reputation(cursor, user_id, direction):
+    if direction == 'up':
+        cursor.execute("UPDATE users SET reputation = reputation + 10 WHERE id={0};".format(user_id,))
+    if direction == 'down':
+        cursor.execute("UPDATE users SET reputation = reputation - 2 WHERE id={0};".format(user_id,))
+    return
+
 # ----------------------------------------------------------
 #                   marks
 # ----------------------------------------------------------
 
 @connection.connection_handler
-def question_mark(cursor, answer_id):
+def question_mark(cursor, answer_id, user_id):
     cursor.execute('SELECT best_answer FROM answer WHERE id=%s',(answer_id,))
-    cursor.execute('UPDATE answer SET best_answer=%s where id=%s',(not cursor.fetchone()['best_answer'],answer_id))
+    is_best_answer = cursor.fetchone()['best_answer']
+    cursor.execute('UPDATE answer SET best_answer=%s where id=%s',(not is_best_answer,answer_id))
+    if is_best_answer:
+        cursor.execute('UPDATE users SET reputation = reputation - 15 WHERE id= {0};'.format(user_id,))
+    else:
+        cursor.execute('UPDATE users SET reputation = reputation + 15 WHERE id= {0};'.format(user_id,))
 
 # ----------------------------------------------------------
 #                   views
@@ -296,13 +365,29 @@ def verify_password(plain_text_password, hashed_password):
 def user_login(cursor, username, password):
     cursor.execute("SELECT password FROM users WHERE name = %s;",(username,))
     database_password = cursor.fetchone()
+    if database_password is None:
+        database_password = {'password': ''}
     return verify_password(password,database_password['password'])
 
 @connection.connection_handler
 def user_register(cursor, username, password, files):
+    if password == '' or username == '':
+        return 1
+    cursor.execute("select name from users")
+    for item in cursor.fetchall():
+        if username == item['name']:
+            return 2
     password = hash_password(password)
     filename = upload_image('./static/avatars', files)
-    cursor.execute("INSERT INTO users (name, password,creation_date,reputation,image,color,permissions) VALUES (%s,%s,%s,0,%s,'white','user');",(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),filename))
+    cursor.execute("INSERT INTO users (name, password,creation_date,reputation,image,color,permissions) "
+                   "VALUES (%s,%s,%s,0,%s,'white','user');",(username,password,str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),filename))
+    return False
+
+
+@connection.connection_handler
+def get_user_id_by_name(cursor, name):
+    cursor.execute('SELECT id FROM users WHERE name = %s', (name,))
+    return cursor.fetchone()['id']
 
 # ----------------------------------------------------------
 #                   file handling

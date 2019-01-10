@@ -1,0 +1,58 @@
+{% extends "layout_user.html" %}
+
+{% block links %}
+    {% include 'navigation.html' %}
+{% endblock %}
+
+
+{% block userprofile %}
+    <div class="center">
+        {{ user['name'] }}<br>
+        <bdi style="color: {{user['color']}}">{{ user['permissions'] }}</bdi><br>
+        <img src="/static/avatars/{{ user['image'] }}" height="64" width="64">
+    </div>
+{% endblock %}
+
+{% block userdata %}
+    <p>Reputation: {{ user['reputation'] }}<br>
+    Email: Hidden<br>
+    Country: Not set<br></p>
+{% endblock %}
+
+{% block content %}
+    <table>
+        <tr>
+            <td>Questions</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="/question/{{ question['id'] }}">{{ question['title'] }}</a>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>Answers</td>
+        </tr>
+        {% for answer in answers %}
+        <tr>
+            <td>
+                <a href="/question/{{ answer['question_id'] }}">{{ answer['message'] }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <table>
+        <tr>
+            <td>Comments</td>
+        </tr>
+        {% for comment in comments %}
+        <tr>
+            <td>
+                <a href="/question/{{ comment['question_id'] }}">{{ comment['message'] }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% include 'footer.html' %}
+{% endblock %}
