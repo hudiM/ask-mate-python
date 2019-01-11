@@ -177,9 +177,7 @@ def get_user_activity(cursor, user_id):
         'SELECT question_id, answer_id, message FROM comment LEFT JOIN users ON comment.user_id = users.id WHERE users.id = %s',
         (user_id,))
     comments = cursor.fetchall()
-    if questions == []:
-        questions = [0]
-    return questions[0], answers, comments
+    return questions, answers, comments
 
 
 @connection.connection_handler

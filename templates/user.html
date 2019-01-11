@@ -18,44 +18,70 @@
     Email: Hidden<br>
     Country: Not set<br></p>
     {% if user['name'] == login_data['username'] %}
-        <a href="/user/edit/{{ user['id'] }}">Edit profile</a>
+        <a href="/user/edit/{{ user['id'] }}">Edit</a>
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <table>
         <tr>
-            <td>Questions</td>
+            <td><h2 style="margin: 9px 0 5px 0;">Questions</h2></td>
         </tr>
-        <tr>
-            <td>
-                <a href="/question/{{ question['id'] }}">{{ question['title'] }}</a>
-            </td>
-        </tr>
+        {% if questions == [] %}
+            <tr>
+                <td>
+                    This user doesn't have any questions yet
+                </td>
+            </tr>
+        {% else %}
+        {% for question in questions %}
+            <tr>
+                <td>
+                    <ul style="margin: 3px 0 3px 0;"><li><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></li></ul>
+                </td>
+            </tr>
+        {% endfor %}
+        {% endif %}
     </table>
     <table>
         <tr>
-            <td>Answers</td>
+            <td><h2 style="margin: 9px 0 5px 0;">Answers</h2></td>
         </tr>
+        {% if answers == [] %}
+            <tr>
+                <td>
+                    This user doesn't have any answers yet
+                </td>
+            </tr>
+        {% else %}
         {% for answer in answers %}
-        <tr>
-            <td>
-                <a href="/question/{{ answer['question_id'] }}">{{ answer['message'] }}</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    <ul style="margin: 3px 0 3px 0;"><li><a href="/question/{{ answer['question_id'] }}">{{ answer['message'] }}</a></li></ul>
+                </td>
+            </tr>
         {% endfor %}
+        {% endif %}
     </table>
     <table>
         <tr>
-            <td>Comments</td>
+            <td><h2 style="margin: 9px 0 5px 0;">Comments</h2></td>
         </tr>
+        {% if comments == [] %}
+            <tr>
+                <td>
+                    This user doesn't have any comments yet
+                </td>
+            </tr>
+        {% else %}
         {% for comment in comments %}
-        <tr>
-            <td>
-                <a href="/question/{{ comment['question_id'] }}">{{ comment['message'] }}</a>
-            </td>
-        </tr>
+            <tr>
+                <td><ul style="margin: 3px 0 3px 0;"><li><a href="/question/{{ comment['question_id'] }}">{{ comment['message'] }}</a></li></ul>
+
+                </td>
+            </tr>
         {% endfor %}
+        {% endif %}
     </table>
     {% include 'footer.html' %}
 {% endblock %}

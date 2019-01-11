@@ -68,13 +68,13 @@ def route_question(question_id):
 @app.route('/user/<user_id>')
 def route_user_profile(user_id):
     login_data = check_login()
-    question, answers, comments = data_manager.get_user_activity(user_id)
+    questions, answers, comments = data_manager.get_user_activity(user_id)
     user = data_manager.get_user_details(user_id)
     for comment in comments:
         if comment['question_id'] is None:
             print('ID:',data_manager.get_question_id_by_answer_id(comment['answer_id']))
             comment['question_id'] = data_manager.get_question_id_by_answer_id(comment['answer_id'])
-    return render_template('user.html', user=user, question=question, answers=answers, comments=comments, login_data=login_data)
+    return render_template('user.html', user=user, questions=questions, answers=answers, comments=comments, login_data=login_data)
 
 @app.route('/users')
 def route_user_list():
